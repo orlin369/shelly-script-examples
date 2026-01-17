@@ -216,8 +216,25 @@ if (status === null) {
 - **YS-IRTM Module** - IR transmitter/receiver module (UART interface)
 - **The Pill** - Shelly device with UART for YS-IRTM connection
 
-## Git Commit Rules
+## Git Workflow
 
+### Branching Strategy
+- **main**: Production-ready code, only receives merges from dev
+- **dev**: Development branch, created from main, where integration happens
+- **feature branches**: Created from dev for each new feature or change
+
+### Branch Naming
+- Feature branches: `feature/<short-description>` (e.g., `feature/add-dimmer-support`)
+- Bug fixes: `fix/<short-description>` (e.g., `fix/mac-validation`)
+
+### Workflow
+1. Create feature branch from dev: `git checkout -b feature/my-feature dev`
+2. Make changes and commit (one file per commit)
+3. Push feature branch and create PR to dev
+4. After review, merge to dev
+5. Periodically merge dev to main for releases
+
+### Commit Rules
 - **One file per commit**: Every change to a file should be a separate commit
 - **Descriptive messages**: Commit message should describe what was changed and why
 - **Atomic commits**: Each commit should represent a single logical change
