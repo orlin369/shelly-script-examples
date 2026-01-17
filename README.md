@@ -77,6 +77,10 @@ var CONFIG = {
 - **Shelly BLU Button1** - BLE presence and button scripts
 - **YS-IRTM Module** - IR scripts (requires UART connection)
 
+## Contributing
+
+See [CLAUDE.md](CLAUDE.md) for coding standards, naming conventions, and git workflow.
+
 ## Resources
 
 - [Shelly Scripting Documentation](https://shelly-api-docs.shelly.cloud/gen2/Scripts/Tutorial)
