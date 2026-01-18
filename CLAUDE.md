@@ -227,17 +227,85 @@ if (status === null) {
 - Feature branches: `feature/<short-description>` (e.g., `feature/add-dimmer-support`)
 - Bug fixes: `fix/<short-description>` (e.g., `fix/mac-validation`)
 
-### Workflow
-1. Create feature branch from dev: `git checkout -b feature/my-feature dev`
-2. Make changes and commit (one file per commit)
-3. Push feature branch and create PR to dev
-4. After review, merge to dev
-5. Periodically merge dev to main for releases
+### Commit Workflow (Step by Step)
 
-### Commit Rules
-- **One file per commit**: Every change to a file should be a separate commit
-- **Descriptive messages**: Commit message should describe what was changed and why
-- **Atomic commits**: Each commit should represent a single logical change
+1. **Checkout dev branch:**
+   ```bash
+   git checkout dev
+   ```
+
+2. **Create feature branch from dev:**
+   ```bash
+   git checkout -b feature/<short-description>
+   ```
+
+3. **Stage and commit changes with descriptive message:**
+   ```bash
+   git add <file>
+   git commit -m "$(cat <<'EOF'
+   Short summary of changes
+
+   - Detailed bullet point 1
+   - Detailed bullet point 2
+   - Detailed bullet point 3
+
+   Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+   EOF
+   )"
+   ```
+
+4. **Test the feature before merging:**
+   - For software-only changes: Run build and verify functionality
+   - For hardware-dependent changes: **ASK the user to test manually**
+   - Never merge untested code into dev
+
+5. **ASK before merging to dev:**
+   - Always ask the user for approval before merging feature into dev
+   - Example: "Feature is ready and committed. May I merge to dev and main?"
+
+6. **Merge feature branch to dev (with --no-ff to preserve branch history):**
+   ```bash
+   git checkout dev
+   git merge feature/<short-description> --no-ff -m "Merge feature/<short-description> into dev"
+   ```
+
+7. **Merge dev to main (with --no-ff to preserve branch history):**
+   ```bash
+   git checkout main
+   git merge dev --no-ff -m "Merge dev into main"
+   ```
+
+8. **Push both branches and clean up:**
+   ```bash
+   git push origin main
+   git push origin dev
+   git branch -d feature/<short-description>
+   ```
+
+### Important: Always Use --no-ff
+
+Always use `--no-ff` (no fast-forward) when merging to create merge commits. This preserves the branch topology and makes the history visible in GitLens:
+
+```
+*   Merge dev into main
+|\
+| *   Merge feature/xyz into dev
+| |\
+| | * Actual commit message
+| |/
+```
+
+### Commit Message Format
+
+```
+Short summary (imperative mood, max 50 chars)
+
+- Bullet point describing change 1
+- Bullet point describing change 2
+- Bullet point describing change 3
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+```
 
 ## Resources
 
