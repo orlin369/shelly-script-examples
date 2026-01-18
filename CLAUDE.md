@@ -13,13 +13,21 @@ shelly-script-examples/
 ├── blu_btn_onoff.shelly.js       # BLU Button toggle switch on single push
 │
 └── the_pill/                     # Scripts for The Pill device
-    └── ys_irtm/                  # YS-IRTM IR module scripts
-        ├── ysirtm.shelly.js      # Core YS-IRTM API library
-        ├── btn2ir.shelly.js      # Button triggers -> IR commands
-        ├── ir2sw.shelly.js       # IR commands -> Switch control
-        ├── ir_full.shelly.js     # Full bidirectional IR control
-        ├── ir_learn.shelly.js    # IR code learning mode
-        └── tv_ir.shelly.js       # TV remote code library
+    ├── vc_cleanup.shelly.js      # Virtual components cleanup utility
+    │
+    ├── ys_irtm/                  # YS-IRTM IR module scripts
+    │   ├── ysirtm.shelly.js      # Core YS-IRTM API library
+    │   ├── btn2ir.shelly.js      # Button triggers -> IR commands
+    │   ├── ir2sw.shelly.js       # IR commands -> Switch control
+    │   ├── ir_full.shelly.js     # Full bidirectional IR control
+    │   ├── ir_learn.shelly.js    # IR code learning mode
+    │   └── tv_ir.shelly.js       # TV remote code library
+    │
+    └── iRobotRoomba/             # iRobot Roomba control scripts
+        ├── roomba.shelly.js           # Core Roomba OI protocol library
+        ├── roomba_setup.shelly.js     # Virtual components setup for library
+        ├── roomba_ctrl.shelly.js      # Button-based Roomba controller
+        └── roomba_ctrl_setup.shelly.js # Virtual components setup for controller
 ```
 
 ## Script Categories
@@ -35,6 +43,13 @@ shelly-script-examples/
 - **NEC IR Codes**: 3-byte format [userHi, userLo, cmd]
 - **Bidirectional**: Send IR commands and receive/decode incoming IR
 - **TV Code Libraries**: Pre-configured codes for Samsung, LG, Generic remotes
+
+### iRobot Roomba (500 Series)
+- **UART Communication**: 115200 baud, 8N1 protocol
+- **Open Interface (OI)**: Full protocol implementation for Roomba control
+- **Cleaning Modes**: Clean, Spot, Dock, and manual drive control
+- **Sensor Reading**: Battery, bumps, cliffs, and wheel drops
+- **Virtual Components**: Status display and button-based control
 
 ## Shelly API Reference
 
@@ -214,7 +229,8 @@ if (status === null) {
 
 - **Shelly BLU Button1** - Bluetooth button for presence/event detection
 - **YS-IRTM Module** - IR transmitter/receiver module (UART interface)
-- **The Pill** - Shelly device with UART for YS-IRTM connection
+- **The Pill** - Shelly device with UART for serial peripherals
+- **iRobot Roomba 500 Series** - Robot vacuum (mini-DIN serial interface)
 
 ## Git Workflow
 
@@ -309,6 +325,17 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 ## Resources
 
+### Shelly
 - [Shelly Scripting Documentation](https://shelly-api-docs.shelly.cloud/gen2/Scripts/Tutorial)
+- [Shelly API Reference](https://shelly-api-docs.shelly.cloud/gen2/)
+- [Shelly Virtual Components](https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Virtual)
+
+### Bluetooth
 - [BTHome Protocol](https://bthome.io/format/)
+
+### Infrared
 - [YS-IRTM Module](https://github.com/mcauser/micropython-ys-irtm)
+
+### iRobot Roomba
+- [Roomba Arduino Library](https://github.com/orlin369/Roomba)
+- [iRobot Create Open Interface Spec](https://www.irobot.com/about-irobot/stem/create-2)
