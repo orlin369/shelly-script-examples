@@ -11,9 +11,9 @@ shelly-script-examples/
 ├── blu_btn_events.shelly.js      # BLU Button event handler (single/double/triple/long push)
 ├── blu_btn_in_range.shelly.js    # BLU Button presence watcher (turn off when out of range)
 ├── blu_btn_onoff.shelly.js       # BLU Button toggle switch on single push
+├── vc_cleanup.shelly.js          # Virtual components cleanup utility (all Gen2/Gen3 devices)
 │
-└── the_pill/                     # Scripts for The Pill device
-    ├── vc_cleanup.shelly.js      # Virtual components cleanup utility
+└── the_pill/                     # Scripts for The Pill device (UART peripherals)
     │
     ├── ys_irtm/                  # YS-IRTM IR module scripts
     │   ├── ysirtm.shelly.js      # Core YS-IRTM API library
@@ -23,11 +23,21 @@ shelly-script-examples/
     │   ├── ir_learn.shelly.js    # IR code learning mode
     │   └── tv_ir.shelly.js       # TV remote code library
     │
-    └── iRobotRoomba/             # iRobot Roomba control scripts
-        ├── roomba.shelly.js           # Core Roomba OI protocol library
-        ├── roomba_setup.shelly.js     # Virtual components setup for library
-        ├── roomba_ctrl.shelly.js      # Button-based Roomba controller
-        └── roomba_ctrl_setup.shelly.js # Virtual components setup for controller
+    ├── iRobotRoomba/             # iRobot Roomba control scripts
+    │   ├── roomba.shelly.js           # Core Roomba OI protocol library
+    │   ├── roomba_setup.shelly.js     # Virtual components setup for library
+    │   ├── roomba_ctrl.shelly.js      # Button-based Roomba controller
+    │   └── roomba_ctrl_setup.shelly.js # Virtual components setup for controller
+    │
+    ├── RFID-RC522/               # MFRC522 RFID card reader scripts
+    │   ├── mfrc522.shelly.js     # Core MFRC522 API library (block read/write)
+    │   └── mfrc522_read.shelly.js # Basic card detection example
+    │
+    ├── SDS018/                   # Nova Fitness SDS018 air quality sensor
+    │   └── sds018.shelly.js      # Core SDS018 API library (PM2.5/PM10)
+    │
+    └── MODBUS/                   # MODBUS-RTU master scripts
+        └── modbus_rtu.shelly.js  # Core MODBUS-RTU library (6 function codes)
 ```
 
 ## Script Categories
@@ -50,6 +60,27 @@ shelly-script-examples/
 - **Cleaning Modes**: Clean, Spot, Dock, and manual drive control
 - **Sensor Reading**: Battery, bumps, cliffs, and wheel drops
 - **Virtual Components**: Status display and button-based control
+
+### RFID (MFRC522-UART Module)
+- **UART Communication**: 9600 baud, 8N1 protocol
+- **Card Detection**: Automatic UID reading when card presented
+- **Block Operations**: Read and write 16-byte blocks with authentication
+- **Key Types**: Support for KEY_A and KEY_B authentication
+- **Event Emission**: Emits `rfid_card` event with UID data
+
+### Air Quality (Nova Fitness SDS018)
+- **UART Communication**: 9600 baud, 8N1 protocol
+- **Measurements**: PM2.5 and PM10 particulate matter (μg/m³)
+- **Modes**: Active (continuous) and query (on-demand) modes
+- **Power Management**: Sleep/wake control to extend sensor lifespan
+- **AQI Calculation**: Built-in US EPA AQI category classification
+
+### MODBUS-RTU (Industrial Protocol)
+- **UART Communication**: 9600 baud (configurable), 8N1/8E1 protocol
+- **Master Mode**: Communicate with MODBUS slave devices
+- **Function Codes**: Read/Write Coils, Read/Write Registers (FC 01-06)
+- **CRC-16**: Built-in MODBUS CRC calculation
+- **Exception Handling**: Parse and report MODBUS exception codes
 
 ## Shelly API Reference
 
@@ -231,6 +262,9 @@ if (status === null) {
 - **YS-IRTM Module** - IR transmitter/receiver module (UART interface)
 - **The Pill** - Shelly device with UART for serial peripherals
 - **iRobot Roomba 500 Series** - Robot vacuum (mini-DIN serial interface)
+- **MFRC522-UART** - RFID card reader module (13.56 MHz, MIFARE cards)
+- **Nova Fitness SDS018** - Laser PM2.5/PM10 air quality sensor
+- **RS485 Module** - MAX485/SP485 transceiver for MODBUS communication
 
 ## Git Workflow
 
@@ -339,3 +373,13 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ### iRobot Roomba
 - [Roomba Arduino Library](https://github.com/orlin369/Roomba)
 - [iRobot Create Open Interface Spec](https://www.irobot.com/about-irobot/stem/create-2)
+
+### RFID
+- [MFRC522-UART-Arduino](https://github.com/zodier/MFRC522-UART-Arduino)
+
+### Air Quality
+- [SDS018 Protocol (PyPMS)](https://github.com/avaldebe/PyPMS)
+
+### MODBUS
+- [MODBUS Protocol Specification](https://modbus.org/specs.php)
+- [MODBUS over Serial Line](https://modbus.org/docs/Modbus_over_serial_line_V1_02.pdf)
