@@ -1,6 +1,13 @@
-// Virtual components cleanup for The Pill by Shelly.
-// This script removes ALL virtual components and groups created.
-// Use this to reset and start fresh
+/**
+ * Virtual Components Cleanup Utility
+ *
+ * Removes ALL virtual components and groups from Shelly Gen2/Gen3 devices.
+ * Use this script to reset and start fresh when reconfiguring virtual components.
+ *
+ * Compatible with all Shelly Gen2/Gen3 devices that support virtual components.
+ *
+ * Usage: Upload and run once. The script auto-disables after cleanup.
+ */
 
 function cleanupAllComponents() {
   print("Scanning for existing virtual components and groups...");
