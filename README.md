@@ -13,6 +13,7 @@ shelly-script-examples/
 │
 └── the_pill/                     # Scripts for The Pill device (UART)
     ├── iRobotRoomba/             # iRobot Roomba control
+    ├── MODBUS/                   # MODBUS-RTU master
     ├── RFID-RC522/               # MFRC522 RFID card reader
     ├── SDS018/                   # Air quality sensor
     └── ys_irtm/                  # YS-IRTM IR module
@@ -68,6 +69,14 @@ Read RFID cards using MFRC522-UART module.
 |--------|-------------|
 | `mfrc522.shelly.js` | Core API library with block read/write support |
 | `mfrc522_read.shelly.js` | Basic card detection example |
+
+### [MODBUS-RTU Master](the_pill/MODBUS/README.md)
+
+Communicate with MODBUS slave devices (sensors, PLCs, energy meters) via RS485.
+
+| Script | Description |
+|--------|-------------|
+| `modbus_rtu.shelly.js` | Core MODBUS-RTU library with 6 function codes (FC 0x01-0x06) |
 
 ### [SDS018 Air Quality Sensor](the_pill/SDS018/README.md)
 
@@ -131,6 +140,7 @@ See [CLAUDE.md](CLAUDE.md) for coding standards, naming conventions, and git wor
 - [YS-IRTM Module Reference](https://github.com/mcauser/micropython-ys-irtm)
 - [Roomba Open Interface](https://github.com/orlin369/Roomba)
 - [MFRC522-UART-Arduino](https://github.com/zodier/MFRC522-UART-Arduino)
+- [MODBUS Protocol Specification](https://modbus.org/specs.php)
 - [SDS018 Protocol (PyPMS)](https://github.com/avaldebe/PyPMS)
 
 ## License
