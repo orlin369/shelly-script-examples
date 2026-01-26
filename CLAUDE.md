@@ -33,6 +33,9 @@ shelly-script-examples/
     │   ├── mfrc522.shelly.js     # Core MFRC522 API library (block read/write)
     │   └── mfrc522_read.shelly.js # Basic card detection example
     │
+    ├── SDS011/                   # Nova Fitness SDS011 air quality sensor
+    │   └── sds011.shelly.js      # Core SDS011 API library (PM2.5/PM10)
+    │
     ├── SDS018/                   # Nova Fitness SDS018 air quality sensor
     │   └── sds018.shelly.js      # Core SDS018 API library (PM2.5/PM10)
     │
@@ -68,7 +71,7 @@ shelly-script-examples/
 - **Key Types**: Support for KEY_A and KEY_B authentication
 - **Event Emission**: Emits `rfid_card` event with UID data
 
-### Air Quality (Nova Fitness SDS018)
+### Air Quality (Nova Fitness SDS011/SDS018)
 - **UART Communication**: 9600 baud, 8N1 protocol
 - **Measurements**: PM2.5 and PM10 particulate matter (μg/m³)
 - **Modes**: Active (continuous) and query (on-demand) modes
@@ -263,7 +266,7 @@ if (status === null) {
 - **The Pill** - Shelly device with UART for serial peripherals
 - **iRobot Roomba 500 Series** - Robot vacuum (mini-DIN serial interface)
 - **MFRC522-UART** - RFID card reader module (13.56 MHz, MIFARE cards)
-- **Nova Fitness SDS018** - Laser PM2.5/PM10 air quality sensor
+- **Nova Fitness SDS011/SDS018** - Laser PM2.5/PM10 air quality sensors
 - **RS485 Module** - MAX485/SP485 transceiver for MODBUS communication
 
 ## Git Workflow
@@ -378,7 +381,8 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 - [MFRC522-UART-Arduino](https://github.com/zodier/MFRC522-UART-Arduino)
 
 ### Air Quality
-- [SDS018 Protocol (PyPMS)](https://github.com/avaldebe/PyPMS)
+- [SDS011/SDS018 Protocol (PyPMS)](https://github.com/avaldebe/PyPMS)
+- [SDS011 Datasheet](https://cdn.sparkfun.com/assets/parts/1/2/2/7/5/Laser_Dust_Sensor_Control_Protocol_V1.3.pdf)
 
 ### MODBUS
 - [MODBUS Protocol Specification](https://modbus.org/specs.php)
