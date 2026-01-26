@@ -15,7 +15,8 @@ shelly-script-examples/
     ├── iRobotRoomba/             # iRobot Roomba control
     ├── MODBUS/                   # MODBUS-RTU master
     ├── RFID-RC522/               # MFRC522 RFID card reader
-    ├── SDS018/                   # Air quality sensor
+    ├── SDS011/                   # Air quality sensor (7-pin)
+    ├── SDS018/                   # Air quality sensor (5-pin)
     └── ys_irtm/                  # YS-IRTM IR module
 ```
 
@@ -79,9 +80,19 @@ Communicate with MODBUS slave devices (sensors, PLCs, energy meters) via RS485.
 | `modbus_rtu.shelly.js` | Core MODBUS-RTU library with 6 function codes (FC 0x01-0x06) |
 | `mb308v.shelly.js` | CWT-MB308V GPIO expander example (8AI+4AO+8DI+12DO) |
 
+### [SDS011 Air Quality Sensor](the_pill/SDS011/README.md)
+
+Read PM2.5/PM10 particulate matter from Nova Fitness SDS011 (7-pin connector).
+
+| Script | Description |
+|--------|-------------|
+| `sds011.shelly.js` | Core API library with console output |
+| `sds011_setup.shelly.js` | Virtual components setup (run once) |
+| `sds011_vc.shelly.js` | Virtual components UI with graphical display |
+
 ### [SDS018 Air Quality Sensor](the_pill/SDS018/README.md)
 
-Read PM2.5/PM10 particulate matter from Nova Fitness SDS018.
+Read PM2.5/PM10 particulate matter from Nova Fitness SDS018 (5-pin connector).
 
 | Script | Description |
 |--------|-------------|
@@ -117,11 +128,12 @@ var CONFIG = {
 };
 ```
 
-### Roomba / MFRC522 / SDS018
+### Roomba / MFRC522 / Air Quality
 
 See individual README files for detailed configuration options:
 - [iRobotRoomba/README.md](the_pill/iRobotRoomba/README.md)
 - [RFID-RC522/README.md](the_pill/RFID-RC522/README.md)
+- [SDS011/README.md](the_pill/SDS011/README.md)
 - [SDS018/README.md](the_pill/SDS018/README.md)
 
 ## Device Compatibility
