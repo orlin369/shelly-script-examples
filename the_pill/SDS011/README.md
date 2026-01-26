@@ -75,6 +75,38 @@ Shelly.emitEvent("air_quality", {
 });
 ```
 
+---
+
+### sds011_setup.shelly.js
+
+**Virtual Components Setup** - Run ONCE to create the UI components.
+
+Creates the following virtual components:
+| Component | Description |
+|-----------|-------------|
+| `number:200` | PM2.5 value display (μg/m³) |
+| `number:201` | PM10 value display (μg/m³) |
+| `text:200` | AQI category display |
+| `button:200` | Wake/Sleep toggle |
+
+After running, you can delete or disable this script.
+
+---
+
+### sds011_vc.shelly.js
+
+**Virtual Components UI** - Main script with graphical interface.
+
+**Prerequisites:** Run `sds011_setup.shelly.js` first to create components.
+
+**Features:**
+- Displays PM2.5 and PM10 on Shelly UI
+- Shows AQI category in real-time
+- Wake/Sleep button for power management
+- Event emission for automation
+
+---
+
 **AQI Categories (US EPA PM2.5 breakpoints):**
 | PM2.5 (μg/m³) | Category |
 |---------------|----------|
