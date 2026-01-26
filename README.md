@@ -77,6 +77,7 @@ Communicate with MODBUS slave devices (sensors, PLCs, energy meters) via RS485.
 | Script | Description |
 |--------|-------------|
 | `modbus_rtu.shelly.js` | Core MODBUS-RTU library with 6 function codes (FC 0x01-0x06) |
+| `mb308v.shelly.js` | CWT-MB308V GPIO expander example (8AI+4AO+8DI+12DO) |
 
 ### [SDS018 Air Quality Sensor](the_pill/SDS018/README.md)
 
