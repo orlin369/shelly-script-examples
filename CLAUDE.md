@@ -34,13 +34,16 @@ shelly-script-examples/
     │   └── mfrc522_read.shelly.js # Basic card detection example
     │
     ├── SDS011/                   # Nova Fitness SDS011 air quality sensor
-    │   └── sds011.shelly.js      # Core SDS011 API library (PM2.5/PM10)
+    │   ├── sds011.shelly.js      # Core SDS011 API library (PM2.5/PM10)
+    │   ├── sds011_setup.shelly.js # Virtual components setup (run once)
+    │   └── sds011_vc.shelly.js   # Virtual components UI with graphical display
     │
     ├── SDS018/                   # Nova Fitness SDS018 air quality sensor
     │   └── sds018.shelly.js      # Core SDS018 API library (PM2.5/PM10)
     │
     └── MODBUS/                   # MODBUS-RTU master scripts
-        └── modbus_rtu.shelly.js  # Core MODBUS-RTU library (6 function codes)
+        ├── modbus_rtu.shelly.js  # Core MODBUS-RTU library (6 function codes)
+        └── mb308v.shelly.js      # CWT-MB308V GPIO expander example
 ```
 
 ## Script Categories
@@ -77,6 +80,7 @@ shelly-script-examples/
 - **Modes**: Active (continuous) and query (on-demand) modes
 - **Power Management**: Sleep/wake control to extend sensor lifespan
 - **AQI Calculation**: Built-in US EPA AQI category classification
+- **Virtual Components**: Graphical UI with PM2.5, PM10, AQI display and wake/sleep button
 
 ### MODBUS-RTU (Industrial Protocol)
 - **UART Communication**: 9600 baud (configurable), 8N1/8E1 protocol
@@ -268,6 +272,7 @@ if (status === null) {
 - **MFRC522-UART** - RFID card reader module (13.56 MHz, MIFARE cards)
 - **Nova Fitness SDS011/SDS018** - Laser PM2.5/PM10 air quality sensors
 - **RS485 Module** - MAX485/SP485 transceiver for MODBUS communication
+- **CWT-MB308V** - ComWinTop GPIO expander (8AI+4AO+8DI+12DO) via MODBUS-RTU
 
 ## Git Workflow
 
