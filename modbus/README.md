@@ -1,93 +1,170 @@
-# shelly_modbus_scripts_examples
+# Modbus RTU with Shelly Devices
 
+This guide introduces Modbus RTU and how to use it with Shelly devices.
 
+## What is Modbus?
 
-## Getting started
+Modbus is a communication protocol widely used for connecting electronic devices. It follows a Client-Server architecture:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- **Client** (formerly "Master"): Initiates all communication, reads and writes data
+- **Server** (formerly "Slave"): Responds to client requests, exports data through registers
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+**Key characteristics:**
+- Only the Client can initiate transactions
+- Servers are passive and cannot notify the Client of events
+- Simple, robust, and widely supported across many devices
 
-## Add your files
+## Transport Types
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+| Transport | Description |
+|-----------|-------------|
+| **Serial/RTU** | Binary protocol over RS-485 (most common, used by Shelly) |
+| Serial/ASCII | Text-based protocol over serial |
+| TCP/IP | Modbus over Ethernet/WiFi |
+
+## Data Model
+
+Modbus organizes data into four register spaces, each with up to 65,536 (2^16) registers:
+
+|            | 1-bit | 16-bit |
+|------------|-------|--------|
+| **Read-only** | Discrete Inputs | Input Registers |
+| **Read-write** | Coils | Holding Registers |
+
+### Register Types Explained
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.allterco.net/orlin.dimitrov/shelly_modbus_scripts_examples.git
-git branch -M main
-git push -uf origin main
++-------------------------------------------------------------------------+
+|                        Modbus Server                                    |
+|                                                                         |
+| +---------+  +----------------+  +----------------+  +----------------+ |
+| | Coils   |  | Discrete Inputs|  | Holding Regs   |  | Input Regs     | |
+| | (RW,1b) |  | (RO,1b)        |  | (RW,16b)       |  | (RO,16b)       | |
+| |0x0000   |  |0x0000          |  |0x0000          |  |0x0000          | |
+| |  ...    |  |   ...          |  |   ...          |  |   ...          | |
+| |0xffff   |  |0xffff          |  |0xffff          |  |0xffff          | |
+| +---------+  +----------------+  +----------------+  +----------------+ |
++-------------------------------------------------------------------------+
 ```
 
-## Integrate with your tools
+- **Coils**: Read-write single bits (e.g., on/off switches)
+- **Discrete Inputs**: Read-only single bits (e.g., sensor states)
+- **Holding Registers**: Read-write 16-bit values (e.g., setpoints)
+- **Input Registers**: Read-only 16-bit values (e.g., measurements)
 
-- [ ] [Set up project integrations](https://gitlab.allterco.net/orlin.dimitrov/shelly_modbus_scripts_examples/-/settings/integrations)
+## Modbus Operations
 
-## Collaborate with your team
+| Register Type | Read Operation | Write Operation |
+|---------------|----------------|-----------------|
+| Discrete Inputs | `0x02` Read Discrete Inputs | N/A |
+| Coils | `0x01` Read Coils | `0x05` Write Single Coil, `0x0F` Write Multiple Coils |
+| Input Registers | `0x04` Read Input Registers | N/A |
+| Holding Registers | `0x03` Read Holding Registers | `0x06` Write Single Register, `0x10` Write Multiple Registers |
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## Shelly Modbus Controller
 
-## Test and Deploy
+Shelly devices include a built-in Modbus RTU Controller accessible via JavaScript scripting:
 
-Use the built-in continuous integration in GitLab.
+```
++-------------------+
+|   JS Bindings     |  <-- SHOS JS API
++-------------------+
+         |
+         v
++-------------------+
+|   Controller      |  <-- Polling, batching, items
++-------------------+
+         |
+         v
++-------------------+
+|     Client        |  <-- Modbus RTU protocol, UART
++-------------------+
+         |
+         v
+ [Physical UART/RS485]
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Configuration Options
 
-***
+**Serial Settings:**
+- UART port and GPIOs (RX, TX, DE)
+- Baud rate, data bits, parity, stop bits
+- Silent time between requests
 
-# Editing this README
+**Controller Options:**
+- Poll interval (minimum time between Modbus requests)
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Entity Types
 
-## Suggestions for a good README
+The controller supports various data types for reading register values:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+**Numeric Types:**
+- `u16`, `i16` - 16-bit unsigned/signed integers
+- `u32`, `i32` - 32-bit unsigned/signed integers
+- `u64`, `i64` - 64-bit unsigned/signed integers
+- `f32`, `f64` - 32/64-bit floating point
 
-## Name
-Choose a self-explaining name for your project.
+**Boolean and Bitfields:**
+- Bitwise booleans for 1-bit registers
+- Bit-masked values within 16-bit registers
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+**Bytes and Strings:**
+- Raw bytes from adjacent registers
+- Null-terminated strings
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Byte Order (Endianness)
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Different devices use different byte ordering. The controller supports:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+| Word Order | BE byte order | LE byte order |
+|------------|---------------|---------------|
+| **BE word order** | ABCD | BADC |
+| **LE word order** | CDAB | DCBA |
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## JavaScript API Example
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```javascript
+// Get the Modbus controller instance
+const mc = ModbusController.get(1);
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+// Configure pause between requests
+mc.setOptions({ pause_ms: 500 });
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+// Add an entity to read a 32-bit float from Input Register 135
+// poll_int: -1 means poll once (not continuously)
+const powerFactor = mc.addEntity({
+    rtype: ModbusController.REGTYPE_INPUT,
+    addr: 135,
+    itype: "f32",
+    poll_int: -1
+});
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+// Listen for value changes
+powerFactor.on("change", function() {
+    console.log("Power Factor:", powerFactor.value());
+});
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Polling Intervals
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+The `poll_int` parameter controls how often a register is read:
 
-## License
-For open source projects, say how it is licensed.
+| Value | Behavior |
+|-------|----------|
+| `0` | Poll as often as possible |
+| `> 0` | Poll every N milliseconds |
+| `-1` | Poll once only |
+| `-2` | Never poll automatically (manual read only) |
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Common Use Cases
+
+- **Energy Meters**: Read voltage, current, power, energy consumption
+- **Solar Inverters**: Monitor production, grid status, battery levels
+- **Sensors**: Temperature, pressure, flow measurements
+- **PLCs**: Control and monitor automated systems
+
+## Resources
+
+- [Modbus Controller API Reference](API.md) - Detailed API documentation
+- [Modbus Organization](https://modbus.org/) - Official Modbus specifications
+- [Shelly API Documentation](https://shelly-api-docs.shelly.cloud/) - Shelly scripting reference
