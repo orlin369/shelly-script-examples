@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## 2026-02
 - Add new `modbus/` example collection and standardize JSDoc headers across the new `.shelly.js` files
+- Restructure loose HTTP integration scripts into per-script folders with matching README files
+- Fix incomplete Prometheus move (update manifest, @link, README, delete old file)
+- Move Telegram files into http-integrations/telegram directory
 - Clarify in `AGENTS.md` that all commit requests must follow AGENTS rules
 - Add Python shebang and UTF-8 encoding headers to all `tools/*.py` scripts
 - Remove deprecated `tools/upload-script.sh` and its documentation section
