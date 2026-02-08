@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2026-02
 - Add new `modbus/` example collection and standardize JSDoc headers across the new `.shelly.js` files
+- Add `switch-input/rgbw-remote-controll.shelly.js` and register it in the manifest/index
 - Restructure loose HTTP integration scripts into per-script folders with matching README files
 - Fix incomplete Prometheus move (update manifest, @link, README, delete old file)
 - Move Telegram files into http-integrations/telegram directory
