@@ -15,10 +15,14 @@ from argparse import ArgumentParser
 import os
 import json
 
-argparser = ArgumentParser()
-argparser.add_argument("file", help="Path to the json file")
+# Default paths (relative to this script's location)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+DEFAULT_MANIFEST = os.path.join(DEFAULT_REPO_ROOT, "examples-manifest.json")
 
 def main():
+  argparser = ArgumentParser()
+  argparser.add_argument("file", nargs="?", default=DEFAULT_MANIFEST, help="Path to the json file (default: examples-manifest.json)")
   args = argparser.parse_args()
   if not args.file:
     print("Missing file argument")
