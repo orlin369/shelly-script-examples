@@ -439,6 +439,11 @@
     "description": "Simple fix for outgoing Domoticz MQTTAD command 'GoToPosition'.\n Shelly firmware 0.x supported. Developed for ShellyTeacher4Domo."
   },
   {
+    "fname": "the_pill/UART/uart_test.shelly.js",
+    "title": "UART test",
+    "description": "Simple UART loopback test that sends periodic messages and prints received data."
+  },
+  {
     "fname": "weather-env/cover-control-weather.shelly.js",
     "title": "Control a Shelly 2.5 (Gen1) depending on current cloud conditions",
     "description": "The script, when run, will fetch via REST api from a weather service the current conditions for a location check if\ncloud coverage is above or below certain percentage and respectively open or close window shades by calling a Shelly\n2.5 (Gen1) endpoint."

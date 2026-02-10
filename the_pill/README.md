@@ -11,4 +11,5 @@ its own README with wiring, setup, and usage details.
 - SDS011 air quality sensor (PM2.5/PM10) — *under development*
 - SDS018 air quality sensor (PM2.5/PM10) — *under development*
 - YS-IRTM infrared module (send/receive NEC codes) — *under development*
+- UART test (loopback/wiring verification) — *under development*
 - _backup (deprecated/experimental scripts)

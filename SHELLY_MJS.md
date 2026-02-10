@@ -388,6 +388,10 @@ switch-input/shelly2p-domo-coverfix.shelly.js: Shelly Plus 2PM cover fix for Dom
 Simple fix for outgoing Domoticz MQTTAD command 'GoToPosition'.
  Shelly firmware 0.x supported. Developed for ShellyTeacher4Domo.
 
+the_pill/UART/uart_test.shelly.js: UART test
+===
+Simple UART loopback test that sends periodic messages and prints received data.
+
 weather-env/cover-control-weather.shelly.js: Control a Shelly 2.5 (Gen1) depending on current cloud conditions
 ===
 The script, when run, will fetch via REST api from a weather service the current conditions for a location check if
