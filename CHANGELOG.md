@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-02
+- Auto-set script name on device from original filename in `put_script.py`
 - Add default manifest path to `sync-manifest-json.py` based on script location
 - Remove non-production `ble/events-to-kvs.shelly.js` from manifest (missing @status)
 - Add remote feature branch cleanup rule to AGENTS.md git workflow

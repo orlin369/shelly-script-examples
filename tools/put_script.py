@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 import sys
 import urllib.request
 import urllib.error
@@ -54,6 +55,12 @@ def start_script(host, script_id):
     call_rpc(host, "Script.Start", {"id": script_id})
 
 
+def rename_script(host, script_id, name):
+    """Set the script name on the device."""
+    print(f"Setting name to '{name}'...")
+    call_rpc(host, "Script.SetConfig", {"id": script_id, "config": {"name": name}})
+
+
 def upload_script(host, script_id, code):
     """Upload script code in chunks."""
     total = len(code)
@@ -81,7 +88,10 @@ def main():
     with open(args.file, mode="r", encoding="utf-8") as f:
         code = f.read()
 
+    name = os.path.basename(args.file)
+
     stop_script(args.host, args.id)
+    rename_script(args.host, args.id, name)
     upload_script(args.host, args.id, code)
     start_script(args.host, args.id)
 
