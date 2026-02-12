@@ -189,10 +189,14 @@ let ENTITIES = [
   },
 ];
 
+// Full refresh interval: once every 24h. (24 * 60 * 60) / UPDATE_RATE cycles.
+var FULL_REFRESH_INTERVAL = (24 * 60 * 60) / UPDATE_RATE;
+var refreshCounter = 0;
+
 /*
     Update SHEKRAN display widgets with current values.
-    Sends a JSON-RPC 2.0 batch request with ui.set for each mapped widget,
-    followed by a screen.refresh to update the ePaper display.
+    Sends a JSON-RPC 2.0 batch request with ui.set for each mapped widget.
+    Uses partial refresh normally, full refresh once every 24h.
 */
 function update_display() {
   let batch = [];
@@ -216,13 +220,17 @@ function update_display() {
 
   if (batch.length === 0) return;
 
-  // Append screen.refresh to trigger ePaper display update.
-  batch.push({
-    jsonrpc: "2.0",
-    method: "screen.refresh",
-    params: { mode: "full" },
-    id: reqId
-  });
+  // Full refresh once every 24h to clear ePaper ghosting.
+  if (refreshCounter >= FULL_REFRESH_INTERVAL) {
+    batch.push({
+      jsonrpc: "2.0",
+      method: "screen.refresh",
+      params: { mode: "full" },
+      id: reqId
+    });
+    refreshCounter = 0;
+  }
+  refreshCounter++;
 
   Shelly.call("HTTP.POST", {
     url: SHEKRAN_RPC_URL,
