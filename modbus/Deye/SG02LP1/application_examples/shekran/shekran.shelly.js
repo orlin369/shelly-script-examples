@@ -28,7 +28,7 @@ var UPDATE_RATE = 60;
 let INVERTER_ID = 1;
 
 // SHEKRAN display JSON-RPC 2.0 endpoint.
-let SHEKRAN_RPC_URL = "http://10.101.2.118/rpc";
+let SHEKRAN_RPC_URL = "http://192.168.1.100/rpc";
 
 // Get a MODBUS-RTU endpoint: ID 1, baud rate 9600, 8 data bits, No parity, 1 stop bit.
 let MODBUS_ENDPOINT = ModbusController.get(INVERTER_ID, { baud: 9600, mode: "8N1" });
@@ -227,20 +227,17 @@ function update_display() {
 
   if (batch.length === 0) return;
 
-  // Partial refresh every cycle; full refresh once every 24h to clear ePaper ghosting.
-  let refreshMode = "partial";
+  // Full refresh once every 24h to clear ePaper ghosting.
   if (refreshCounter >= FULL_REFRESH_INTERVAL) {
-    refreshMode = "full";
+    batch.push({
+      jsonrpc: "2.0",
+      method: "screen.refresh",
+      params: { mode: "full" },
+      id: reqId
+    });
     refreshCounter = 0;
   }
   refreshCounter++;
-
-  batch.push({
-    jsonrpc: "2.0",
-    method: "screen.refresh",
-    params: { mode: refreshMode },
-    id: reqId
-  });
 
   Shelly.call("HTTP.POST", {
     url: SHEKRAN_RPC_URL,
