@@ -17,6 +17,8 @@
       - "battery_power"  (lv_label) - Battery Power [W]
       - "grid_power"     (lv_label) - Total Grid Power [W]
       - "load_power"     (lv_label) - Total Power / Load [W]
+      - "battery"        (lv_bar)   - Battery SOC [%]
+      - "battery_lbl"    (lv_label) - Battery SOC text [%]
 */
 
 // Update rate (sec)
@@ -115,7 +117,8 @@ let ENTITIES = [
     scale: 1,
     rights: "R",
     vcId: "number:204",
-    widgetId: null,
+    widgetId: "battery",
+    widgetProp: "value",
     handle: null,
     vcHandle: null,
   },
@@ -208,11 +211,15 @@ function update_display() {
 
     let value = ent.handle.getValue() * ent.scale;
     let valueStr = "" + value;
+    let prop = ent.widgetProp || "text";
+
+    let params = { id: ent.widgetId };
+    params[prop] = valueStr;
 
     batch.push({
       jsonrpc: "2.0",
       method: "ui.set",
-      params: { id: ent.widgetId, text: valueStr },
+      params: params,
       id: reqId
     });
     reqId++;
@@ -220,17 +227,20 @@ function update_display() {
 
   if (batch.length === 0) return;
 
-  // Full refresh once every 24h to clear ePaper ghosting.
+  // Partial refresh every cycle; full refresh once every 24h to clear ePaper ghosting.
+  let refreshMode = "partial";
   if (refreshCounter >= FULL_REFRESH_INTERVAL) {
-    batch.push({
-      jsonrpc: "2.0",
-      method: "screen.refresh",
-      params: { mode: "full" },
-      id: reqId
-    });
+    refreshMode = "full";
     refreshCounter = 0;
   }
   refreshCounter++;
+
+  batch.push({
+    jsonrpc: "2.0",
+    method: "screen.refresh",
+    params: { mode: refreshMode },
+    id: reqId
+  });
 
   Shelly.call("HTTP.POST", {
     url: SHEKRAN_RPC_URL,
