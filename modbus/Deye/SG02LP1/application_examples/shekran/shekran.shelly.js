@@ -28,7 +28,7 @@ var UPDATE_RATE = 60;
 let INVERTER_ID = 1;
 
 // SHEKRAN display JSON-RPC 2.0 endpoint.
-let SHEKRAN_RPC_URL = "http://192.168.1.100/rpc";
+let SHEKRAN_RPC_URL = "http://10.101.2.118/rpc";
 
 // Get a MODBUS-RTU endpoint: ID 1, baud rate 9600, 8 data bits, No parity, 1 stop bit.
 let MODBUS_ENDPOINT = ModbusController.get(INVERTER_ID, { baud: 9600, mode: "8N1" });
@@ -227,17 +227,21 @@ function update_display() {
 
   if (batch.length === 0) return;
 
+  // Partial refresh on every update cycle to show new values.
   // Full refresh once every 24h to clear ePaper ghosting.
+  let refreshMode = "partial";
   if (refreshCounter >= FULL_REFRESH_INTERVAL) {
-    batch.push({
-      jsonrpc: "2.0",
-      method: "screen.refresh",
-      params: { mode: "full" },
-      id: reqId
-    });
+    refreshMode = "full";
     refreshCounter = 0;
   }
   refreshCounter++;
+
+  batch.push({
+    jsonrpc: "2.0",
+    method: "screen.refresh",
+    params: { mode: refreshMode },
+    id: reqId
+  });
 
   Shelly.call("HTTP.POST", {
     url: SHEKRAN_RPC_URL,
@@ -292,6 +296,21 @@ function init() {
       ent.vcHandle = Virtual.getHandle(ent.vcId);
     }
   }
+
+  // Load the main screen on the SHEKRAN display at startup.
+  Shelly.call("HTTP.POST", {
+    url: SHEKRAN_RPC_URL,
+    body: JSON.stringify([
+      {jsonrpc: "2.0", method: "screen.load", params: {name: "main"}, id: 1},
+      {jsonrpc: "2.0", method: "ui.set", params: {id: "title", text: "Deye"}, id: 2},
+      {jsonrpc: "2.0", method: "screen.refresh", params: {mode: "full"}, id: 3}
+    ]),
+    content_type: "application/json"
+  }, function(res) {
+    if (res && res.code !== 200) {
+      console.log("SHEKRAN screen.load failed:", JSON.stringify(res));
+    }
+  });
 
   Timer.set(UPDATE_RATE * 1000, true, update);
 }
