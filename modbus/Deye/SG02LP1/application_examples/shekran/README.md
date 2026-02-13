@@ -8,24 +8,34 @@ This script reads live data from a Deye SG02LP1 solar inverter over Modbus RTU a
 The SHEKRAN is an ESP32-based device with a 2.13" black-and-white ePaper screen. It accepts widget updates over HTTP and renders them on demand.
 
 ## How it works
-Every 60 seconds the script:
-1. Reads all configured Modbus registers from the inverter.
-2. Updates the corresponding virtual components on the Shelly device.
-3. Sends a JSON-RPC 2.0 batch request to the SHEKRAN display with `ui.set` for each mapped widget.
-4. Triggers a partial `screen.refresh` so the ePaper renders the new values.
-5. Once every 24 hours a full refresh is performed to clear ePaper ghosting.
+1. **Initialization**: 
+   - At startup, the script registers all Modbus entities and associates them with virtual components on the Shelly device.
+   - It sends an initial command to the SHEKRAN display to load the `main` screen and performs a full refresh.
+2. **Scheduled Updates**: Every `UPDATE_RATE` seconds (default 60s), the script:
+   - Reads the latest values from the inverter for all configured Modbus registers.
+   - Updates the corresponding virtual components on the Shelly device.
+   - Sends a single JSON-RPC 2.0 batch request to the SHEKRAN display to update all mapped widgets (`ui.set`).
+   - Triggers a partial `screen.refresh` so the ePaper renders the new values.
+3. **Maintenance**:
+   - Once every 24 hours, a full `screen.refresh` is performed to clear ePaper ghosting.
 
-## Widget mapping
+## Mappings
 
-The `main` screen on the SHEKRAN display uses these widget IDs:
+The script maps Modbus registers to Shelly virtual components and SHEKRAN display widgets.
 
-| Widget ID | Type | Modbus Register | Description |
-|---|---|---|---|
-| `battery` | `lv_bar` | 184 (u16) | Battery SOC [%] |
-| `battery_power` | `lv_label` | 190 (i16) | Battery Power [W] |
-| `pv_power` | `lv_label` | 186 (u16) | PV1 Power [W] |
-| `grid_power` | `lv_label` | 169 (i16) | Total Grid Power [W] |
-| `load_power` | `lv_label` | 175 (i16) | Total Power / Load [W] |
+| Description        | Modbus Register | Scale  | Shelly Virtual Component | SHEKRAN Widget ID |
+|--------------------|-----------------|--------|--------------------------|-------------------|
+| **Total Power**    | 175 (i16)       | 1      | `number:200`             | `load_power`      |
+| **Battery Power**  | 190 (i16)       | 1      | `number:201`             | `battery_power`   |
+| **PV1 Power**      | 186 (u16)       | 1      | `number:202`             | `pv_power`        |
+| **Total Grid Power**| 169 (i16)      | 10     | `number:203`             | `grid_power`      |
+| **Battery SOC**    | 184 (u16)       | 1      | `number:204`             | `battery`         |
+| PV1 Voltage        | 109 (u16)       | 0.1    | `number:205`             | -                 |
+| Grid Voltage L1    | 150 (u16)       | 0.1    | `number:206`             | -                 |
+| Current L1         | 164 (i16)       | 0.01   | `number:207`             | -                 |
+| AC Frequency       | 192 (u16)       | 0.01   | `number:208`             | -                 |
+
+*Note: Some values are read from the inverter and stored in virtual components but are not displayed on the SHEKRAN screen by default.*
 
 ## Screen definitions
 

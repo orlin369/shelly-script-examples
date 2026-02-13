@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-02
+- Update `modbus/Deye/SG02LP1/application_examples/shekran/README.md` to reflect script functionality
 - Add new `modbus/` example collection and standardize JSDoc headers across the new `.shelly.js` files
 - Add `switch-input/rgbw-remote-controll.shelly.js` and register it in the manifest/index
 - Restructure loose HTTP integration scripts into per-script folders with matching README files
