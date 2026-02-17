@@ -31,7 +31,7 @@ var CONFIG = {
     MODE: "8N1",
     SLAVE_ID: 1,
     RESPONSE_TIMEOUT: 1000,
-    POLL_INTERVAL: 3000,
+    POLL_INTERVAL: 10000,
     DEBUG: true
 };
 
