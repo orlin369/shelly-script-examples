@@ -66,40 +66,15 @@ MODBUS.readCoil(slave, addr, callback)           // Read single coil
 
 ---
 
-### mb308v.shelly.js
+### ComWinTop/mb308v.shelly.js
 
-**CWT-MB308V GPIO Expander Example** - Complete example for ComWinTop MB308V IO module.
+**CWT-MB308V GPIO Expander Example** - See [ComWinTop/README.md](ComWinTop/README.md) for full documentation.
 
-**Device Specifications:**
-- 8 Analog Inputs (AI): 4-20mA / 0-5V / 0-10V
-- 4 Analog Outputs (AO): 0-10V / 4-20mA
-- 8 Digital Inputs (DI): Dry contact / NPN
-- 12 Digital Outputs (DO): Relay outputs
+---
 
-**Register Map:**
+### JK200-MBS/the_pill_mbsa_jk200.shelly.js
 
-| Type | Function Code | Address Range | Count |
-|------|---------------|---------------|-------|
-| Digital Outputs (DO) | FC 0x01 (read) / FC 0x05 (write) | 0-11 | 12 coils |
-| Digital Inputs (DI) | FC 0x02 (read) | 0-7 | 8 inputs |
-| Analog Outputs (AO) | FC 0x03 (read) / FC 0x06 (write) | 0-3 | 4 registers |
-| Analog Inputs (AI) | FC 0x04 (read) | 0-7 | 8 registers |
-
-**API Methods:**
-```javascript
-readDigitalInputs(callback)              // Read 8 DI
-readDigitalOutputs(callback)             // Read 12 DO (relays)
-writeDigitalOutput(channel, value, cb)   // Set relay (0-11, true/false)
-readAnalogInputs(callback)               // Read 8 AI
-readAnalogOutputs(callback)              // Read 4 AO
-writeAnalogOutput(channel, value, cb)    // Set AO (0-3, 0-24000)
-
-// Conversion helpers
-aiToMilliamps(raw)    // Convert AI to mA (4-20mA mode)
-aiToVoltage(raw)      // Convert AI to V (0-10V mode)
-milliampsToAo(mA)     // Convert mA to AO value
-voltageToAo(volts)    // Convert V to AO value
-```
+**Jikong JK-PB BMS Reader** - See [JK200-MBS/README.md](JK200-MBS/README.md) for full documentation.
 
 ## Usage Examples
 
@@ -143,54 +118,6 @@ MODBUS.writeSingleRegister(1, 100, 250, function(err, success) {
 });
 ```
 
-### CWT-MB308V Examples
-
-**Read all digital inputs:**
-```javascript
-readDigitalInputs(function(err, inputs) {
-    if (err) {
-        print("Error: " + err);
-        return;
-    }
-    for (var i = 0; i < inputs.length; i++) {
-        print("DI" + i + ": " + (inputs[i] ? "ON" : "OFF"));
-    }
-});
-```
-
-**Control relay output:**
-```javascript
-// Turn ON relay 0
-writeDigitalOutput(0, true, function(err, success) {
-    if (success) print("Relay 0 ON");
-});
-
-// Turn OFF relay 5
-writeDigitalOutput(5, false, function(err, success) {
-    if (success) print("Relay 5 OFF");
-});
-```
-
-**Read analog inputs (4-20mA sensors):**
-```javascript
-readAnalogInputs(function(err, values) {
-    if (err) return;
-    for (var i = 0; i < values.length; i++) {
-        var mA = aiToMilliamps(values[i]);
-        print("AI" + i + ": " + mA.toFixed(2) + " mA");
-    }
-});
-```
-
-**Set analog output (0-10V mode):**
-```javascript
-// Set AO0 to 5V
-var rawValue = voltageToAo(5.0);
-writeAnalogOutput(0, rawValue, function(err, success) {
-    if (success) print("AO0 set to 5V");
-});
-```
-
 ## Configuration
 
 ```javascript
@@ -206,5 +133,3 @@ var CONFIG = {
 
 - [MODBUS Protocol Specification](https://modbus.org/specs.php)
 - [MODBUS over Serial Line](https://modbus.org/docs/Modbus_over_serial_line_V1_02.pdf)
-- [ComWinTop CWT-MB308V](https://store.comwintop.com/products/cwt-mb308v-8ai-4ao-8di-12do-rs485-rs232-ethernet-modbus-rtu-tcp-io-acquisition-module)
-- [MB308V Python Driver](https://github.com/bgerp/ztm/blob/master/Zontromat/devices/vendors/cwt/mb308v/mb308v.py)

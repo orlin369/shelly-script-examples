@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-02
+- Add JK200 BMS MODBUS-RTU reader (`the_pill/MODBUS/JK200-MBS`) with README
+- Mark Deye SG02LP1 MODBUS-RTU scripts as production; fix @link URLs; add to manifest; add README
 - Auto-set script name on device from original filename in `put_script.py`
 - Add default manifest path to `sync-manifest-json.py` based on script location
 - Remove non-production `ble/events-to-kvs.shelly.js` from manifest (missing @status)
