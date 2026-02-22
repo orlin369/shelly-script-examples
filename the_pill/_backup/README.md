@@ -31,3 +31,31 @@ These files are **not intended for production use**. They are kept for reference
 - IR control: `the_pill/ys_irtm/`
 - Roomba control: `the_pill/iRobotRoomba/`
 - RFID reading: `the_pill/RFID-RC522/`
+
+
+## Schematic
+
+```ASCII
+                                             5V
+                                             |
+            /----------74LS241--------\      |
+            |                         |      |
+            |                       [20]-----+
+            |                         |      |
+            |                         |    [10k]
+            |                         |      |
+ Tx  >-----[17]--[>]----------------[ 3]-----+-----> to motor data pin
+            |     |                   |      |
+            |     |                   |      |
+        +--[19]---+                   |      |
+        |   |                         |      |
+ DIR >--+--[ 1]---+                   |      |
+            |     |                   |      |
+            |     O                   |      |
+ Rx  >-----[18]--[>]----------------[ 2]-----+
+            |                         |
+            |                         |
+ GND >-----[10]                       |
+            |                         |
+            \-------------------------/
+```
