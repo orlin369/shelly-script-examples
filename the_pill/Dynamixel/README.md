@@ -201,3 +201,31 @@ Moving all servos to pose A.
 - [Dynamixel Protocol 1.0 (ROBOTIS e-Manual)](https://emanual.robotis.com/docs/en/dxl/protocol1/)
 - [AX-12A e-Manual](https://emanual.robotis.com/docs/en/dxl/ax/ax-12a/)
 - [PyDynamixel — Python reference implementation](https://github.com/orlin369/PyDynamixel)
+
+
+## Schematic
+
+```ASCII
+                                             5V
+                                             |
+            /----------74LS241--------\      |
+            |                         |      |
+            |                       [20]-----+
+            |                         |      |
+            |                         |    [10k]
+            |                         |      |
+ Tx  >-----[17]--[>]----------------[ 3]-----+-----> to motor data pin
+            |     |                   |      |
+            |     |                   |      |
+        +--[19]---+                   |      |
+        |   |                         |      |
+ DIR >--+--[ 1]---+                   |      |
+            |     |                   |      |
+            |     O                   |      |
+ Rx  >-----[18]--[>]----------------[ 2]-----+
+            |                         |
+            |                         |
+ GND >-----[10]                       |
+            |                         |
+            \-------------------------/
+```

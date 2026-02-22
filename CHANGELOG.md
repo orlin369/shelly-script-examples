@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Add Dynamixel Protocol 1.0 scripts: `dynamixel_list.shelly.js` (network scanner) and `dynamixel_move6.shelly.js` (SYNC_WRITE 6-servo motion demo)
 - Add README for `the_pill/Dynamixel` with wiring diagrams, protocol reference and quick start
 - Add 74LS241 half-duplex TTL schematic (ASCII art) to `the_pill/_backup/README.md`
+- Add 74LS241 schematic to `the_pill/Dynamixel/README.md`
 - Add JK200 BMS MODBUS-RTU reader (`the_pill/MODBUS/JK200-MBS`) with README
 - Mark Deye SG02LP1 MODBUS-RTU scripts as production; fix @link URLs; add to manifest; add README
 - Auto-set script name on device from original filename in `put_script.py`
