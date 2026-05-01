@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-05
+- Add `http-integrations/ecoflow/stream-ultra/` with static-config EcoFlow STREAM Ultra load-balancing scripts, screenshot, and README files; add parent `http-integrations/ecoflow/README.md`
+- Simplify `the_pill/MODBUS/` documentation by removing duplicated per-device RS485 pinout text and a redundant root index screenshot/list entries
+
 ## 2026-04
 - Replace per-device text wiring descriptions with a unified ASCII art diagram in all 23 `the_pill/MODBUS/**/*.shelly.js` examples
 - Promote `the_pill/MODBUS/MarsRock/SUN-G2/sun_g2.shelly.js`, `sun_g2_vc.shelly.js`, `wirenboard/WB-MIR-v-3/wb_mir_v3_ir.shelly.js`, `ComWinTop/mb308v.shelly.js`, and `mb308v_vc.shelly.js` to production
