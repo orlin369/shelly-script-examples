@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-05
+- Restructure `http-integrations/tasmota/` into collection and device folders; add README files describing the Shelly-to-Tasmota relationship and move `mitsubishi_heavy_ac_vc.shelly.js` into `http-integrations/tasmota/mitsubishi-heavy-ac/`
+- Standardize `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` with repository metadata headers, technical documentation block, sectioned Shelly script layout, and anonymized target labels/IP placeholders
 - Add `http-integrations/ecoflow/stream-ultra/` with static-config EcoFlow STREAM Ultra load-balancing scripts, screenshot, and README files; add parent `http-integrations/ecoflow/README.md`
 - Simplify `the_pill/MODBUS/` documentation by removing duplicated per-device RS485 pinout text and a redundant root index screenshot/list entries
 
