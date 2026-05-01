@@ -65,6 +65,11 @@ var DEVICES_CFG = [
 3. Find your STREAM Ultra **serial number** in the EcoFlow app under device settings.
 4. Fill in `CONFIG.accessKey`, `CONFIG.secretKey`, and `CONFIG.serial`.
 
+## Screenshot
+This screenshot shows the EcoFlow STREAM Ultra Virtual Components group in the Shelly app with Battery SOC, Battery Power, PV Power, Grid Power, Load Power, Backup Reserve SOC, Meters Total, Feed Grid, and Night Mode updating in real time.
+
+![EcoFlow STREAM Ultra screenshot](screenshot.png)
+
 ## References
 - [EcoFlow Open Platform (EU)](https://developer-eu.ecoflow.com)
 - [EcoFlow Open Platform (US)](https://developer.ecoflow.com)

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-05
+- Restructure `http-integrations/tasmota/` into collection and device folders; add README files describing the Shelly-to-Tasmota relationship and move `mitsubishi_heavy_ac_vc.shelly.js` into `http-integrations/tasmota/mitsubishi-heavy-ac/`
+- Standardize `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` with repository metadata headers, technical documentation block, sectioned Shelly script layout, and anonymized target labels/IP placeholders
+- Add `http-integrations/ecoflow/stream-ultra/` with static-config EcoFlow STREAM Ultra load-balancing scripts, screenshot, and README files; add parent `http-integrations/ecoflow/README.md`
+- Simplify `the_pill/MODBUS/` documentation by removing duplicated per-device RS485 pinout text and a redundant root index screenshot/list entries
+
 ## 2026-04
 - Restore `http-integrations/fronius/integration.shelly.js` unchanged and add `http-integrations/fronius/integration-dashboard.shelly.js` as a local-only under-development multi-channel Fronius dashboard variant with 10 VC slots, integrated kWh logging, runtime VC metadata updates, and configurable lookup paths for battery, Wattpilot, and ELWA data
 - Fix `http-integrations/fronius/integration.shelly.js` to use Shelly Virtual Component handles with typed VC keys (`number:200`-`number:203`) and restore valid Fronius HTTP polling

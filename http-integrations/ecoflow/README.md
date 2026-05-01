@@ -14,6 +14,11 @@ EcoFlow batteries (e.g. STREAM Ultra) can be commanded over the EcoFlow cloud AP
 
 - [`stream-ultra/`](stream-ultra/): EcoFlow STREAM Ultra battery examples
 
+## Screenshot
+This screenshot shows the EcoFlow STREAM Ultra Virtual Components group in the Shelly app with key battery and power metrics updating in real time.
+
+![EcoFlow STREAM Ultra screenshot](stream-ultra/screenshot.png)
+
 ## References
 - [EcoFlow Open Platform (EU)](https://developer-eu.ecoflow.com)
 - [EcoFlow Open Platform (US)](https://developer.ecoflow.com)
