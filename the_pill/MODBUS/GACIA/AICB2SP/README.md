@@ -74,13 +74,6 @@ Smart circuit breakers combine traditional overcurrent protection with IoT monit
                         |=============|              |==============|
 ```
 
-| The Pill Pin | Breaker Terminal |
-|---|---|
-| `IO1 (TX)` → `B (D-)` | RS485 `B` / `D-` |
-| `IO2 (RX)` → `A (D+)` | RS485 `A` / `D+` |
-| `IO3` → `DE/RE` | transceiver direction (automatic) |
-| `GND` → `GND` | common ground |
-
 > The breaker requires its own AC supply (110/230 V). The RS485 interface is
 > powered internally from the breaker; no separate 5 V is needed on the RS485 side.
 

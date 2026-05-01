@@ -51,11 +51,6 @@
  *                    |    | +5V       A |              |              |
  *                    \====|           B |              |              |
  *                         |=============|              |==============|
- *
- *   IO1 (TX)  --- B (D-)  --> Breaker RS485 B (D-)
- *   IO2 (RX)  --- A (D+)  --> Breaker RS485 A (D+)
- *   IO3       --- DE/RE       direction control (automatic)
- *   GND       --- GND     --> Breaker GND
  */
 
 /* === CONFIG === */

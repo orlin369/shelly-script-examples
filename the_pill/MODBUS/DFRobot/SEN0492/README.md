@@ -109,15 +109,6 @@ This screenshot shows the DFRobot SEN0492 Virtual Components page with the Dista
                         |=============|              |==============|
 ```
 
-| The Pill Pin | Wire Color | Sensor Signal |
-|---|---|---|
-| `IO1 (TX)` → `B` | Green | RS485 B |
-| `IO2 (RX)` → `A` | Yellow | RS485 A |
-| `IO3` → `DE/RE` | — | transceiver direction (automatic) |
-| `GND` | Black | GND |
-| `5–36 V` (separate supply) | Red | VCC |
-| not connected | White | ALARM (open-collector, active LOW) |
-
 ## Reference
 
 - [DFRobot SEN0492 Wiki](https://wiki.dfrobot.com/Laser_Ranging_Sensor_RS485_4m_SKU_SEN0492)

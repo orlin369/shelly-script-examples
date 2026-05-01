@@ -54,13 +54,6 @@
  *                    \====|           B |              |              |
  *                         |=============|              |==============|
  *
- *   IO1 (TX)  --- B           (Green)  --> Sensor RS485 B
- *   IO2 (RX)  --- A           (Yellow) --> Sensor RS485 A
- *   IO3       --- DE/RE                    direction control (automatic)
- *   GND       --- GND         (Black)  --> Sensor GND
- *   5–36V     --- VCC         (Red)    --> Sensor power (separate supply)
- *   n/c       --- ALARM       (White)      open-collector alarm, active LOW
- *
  * Reference: https://wiki.dfrobot.com/Laser_Ranging_Sensor_RS485_4m_SKU_SEN0492
  */
 

@@ -27,8 +27,3 @@ GACIA smart MCBs combine traditional overcurrent protection with built-in meteri
                    \====|           B |              |              |
                         |=============|              |==============|
 ```
-
-- `IO1 (TX)` → `B (D-)`
-- `IO2 (RX)` → `A (D+)`
-- `IO3` → `DE/RE` for half-duplex direction
-- `GND` shared

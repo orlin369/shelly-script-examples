@@ -27,14 +27,3 @@ DFRobot produces a range of IP-rated industrial sensors with RS485/MODBUS-RTU in
                    \====|           B |              |              |
                         |=============|              |==============|
 ```
-
-### SEN0492 Cable Colors
-
-| The Pill Pin | Wire Color | Sensor Signal |
-|---|---|---|
-| `IO1 (TX)` → `B` | Green | RS485 B |
-| `IO2 (RX)` → `A` | Yellow | RS485 A |
-| `IO3` → `DE/RE` | — | transceiver direction (automatic) |
-| `GND` | Black | GND |
-| `5–36 V` (separate supply) | Red | VCC |
-| not connected | White | ALARM (open-collector, active LOW) |
