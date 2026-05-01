@@ -17,7 +17,9 @@ transmits the infrared command.
 
 ## Files
 
-- [`mitsubishi_heavy_ac_vc.shelly.js`](mitsubishi_heavy_ac_vc.shelly.js): creates Virtual Components and sends `IRHVAC` commands to the selected Tasmota target
+| File | Status | Description |
+|------|--------|-------------|
+| [`mitsubishi_heavy_ac_vc.shelly.js`](mitsubishi_heavy_ac_vc.shelly.js) | production | Creates Virtual Components and sends `IRHVAC` commands to the selected Tasmota target. |
 
 ## How Shelly and Tasmota Work Together
 

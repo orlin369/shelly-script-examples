@@ -11,7 +11,11 @@ A home energy setup with a STREAM Ultra battery needs to automatically switch be
 - Installer commissioning a STREAM Ultra alongside Shelly metering
 
 ## Files
-- [`load_balancing_static.shelly.js`](load_balancing_static.shelly.js): polls Shelly meters, dispatches charge / discharge / idle commands to the STREAM Ultra
+
+| File | Status | Description |
+|------|--------|-------------|
+| [`load_balancing_static_vc.shelly.js`](load_balancing_static_vc.shelly.js) | production | Creates Shelly Virtual Components, polls Shelly meters, and dispatches charge / discharge / idle commands to the STREAM Ultra. |
+| [`load_balancing_static.shelly.js`](load_balancing_static.shelly.js) | under development | Console/static-config variant without the production VC dashboard flow. |
 
 ## Modes
 

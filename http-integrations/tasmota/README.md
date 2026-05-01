@@ -21,7 +21,7 @@ These examples show how to connect the two roles over the local network:
 
 ## Device Folders
 
-- [`mitsubishi-heavy-ac/`](mitsubishi-heavy-ac/): Mitsubishi Heavy HVAC control through Tasmota IR bridges
+- [`mitsubishi-heavy-ac/`](mitsubishi-heavy-ac/): Mitsubishi Heavy HVAC control through Tasmota IR bridges. The Virtual Components controller is production.
 
 ## Shelly-Tasmota Relationship
 
