@@ -2,7 +2,7 @@
  * @title Mitsubishi Heavy AC control via Tasmota IR bridge
  * @description Creates Virtual Components for Mitsubishi Heavy HVAC control
  *   and sends IRHVAC commands to one or more Tasmota IR bridges over HTTP.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js
  */
 

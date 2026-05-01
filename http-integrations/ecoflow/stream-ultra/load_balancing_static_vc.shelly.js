@@ -5,7 +5,7 @@
  *   and idle modes based on total load and a configurable night-charging window.
  *   Creates Virtual Components on first run to visualise EcoFlow device parameters
  *   in the Shelly app dashboard.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/http-integrations/ecoflow/stream-ultra/load_balancing_static_vc.shelly.js
  */
 
