@@ -43,6 +43,17 @@
  *                  RX: 50 03 02 07 0B 06 7F  -> 0x070B = 1803 mm
  *
  * The Pill 5-Terminal Add-on wiring:
+ *
+ *                         |=============|              |==============|
+ *                    /====|         VCC |              |              |
+ *                    |    | GND     GND |              | SLAVE DEVICE |
+ * /========\         |    | TX      +5V |              |              |
+ * |The Pill|-----=||||    | RX        A |------\/------| A            |
+ * \========/         |    | RE/DE     B |------/\------| B            |
+ *                    |    | +5V       A |              |              |
+ *                    \====|           B |              |              |
+ *                         |=============|              |==============|
+ *
  *   IO1 (TX)  --- B           (Green)  --> Sensor RS485 B
  *   IO2 (RX)  --- A           (Yellow) --> Sensor RS485 A
  *   IO3       --- DE/RE                    direction control (automatic)

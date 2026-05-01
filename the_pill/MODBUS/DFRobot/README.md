@@ -16,6 +16,18 @@ DFRobot produces a range of IP-rated industrial sensors with RS485/MODBUS-RTU in
 
 ## RS485 Wiring (The Pill 5-Terminal Add-on)
 
+```
+                        |=============|              |==============|
+                   /====|         VCC |              |              |
+                   |    | GND     GND |              | SLAVE DEVICE |
+/========\         |    | TX      +5V |              |              |
+|The Pill|-----=||||    | RX        A |------\/------| A            |
+\========/         |    | RE/DE     B |------/\------| B            |
+                   |    | +5V       A |              |              |
+                   \====|           B |              |              |
+                        |=============|              |==============|
+```
+
 ### SEN0492 Cable Colors
 
 | The Pill Pin | Wire Color | Sensor Signal |

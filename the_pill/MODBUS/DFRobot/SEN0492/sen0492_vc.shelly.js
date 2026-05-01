@@ -43,6 +43,17 @@
  *   group:200   DFRobot SEN0492
  *
  * The Pill 5-Terminal Add-on wiring:
+ *
+ *                         |=============|              |==============|
+ *                    /====|         VCC |              |              |
+ *                    |    | GND     GND |              | SLAVE DEVICE |
+ * /========\         |    | TX      +5V |              |              |
+ * |The Pill|-----=||||    | RX        A |------\/------| A            |
+ * \========/         |    | RE/DE     B |------/\------| B            |
+ *                    |    | +5V       A |              |              |
+ *                    \====|           B |              |              |
+ *                         |=============|              |==============|
+ *
  *   IO1 (TX)  --- B           (Green)  --> Sensor RS485 B
  *   IO2 (RX)  --- A           (Yellow) --> Sensor RS485 A
  *   IO3       --- DE/RE                    direction control (automatic)
