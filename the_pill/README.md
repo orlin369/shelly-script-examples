@@ -19,6 +19,7 @@ its own README with wiring, setup, and usage details.
   - [LinkedGo/R290/](MODBUS/LinkedGo/R290/) — LinkedGo R290 air-to-water heat pump — *under development*
   - [HTTP-Bridge/](MODBUS/HTTP-Bridge/) — MODBUS-RTU HTTP bridge — *under development*
 - **[iRobotRoomba/](iRobotRoomba/)** — iRobot Roomba Open Interface control — *under development*
+- **[Paradox/](Paradox/)** — Paradox PRT3 ASCII alarm bridge for EVO/Digiplex panels — *under development*
 - **[RFID-RC522/](RFID-RC522/)** — MFRC522 RFID reader (UART) — *under development*
 - **[SDS011/](SDS011/)** — SDS011 air quality sensor (PM2.5/PM10) — *under development*
 - **[SDS018/](SDS018/)** — SDS018 air quality sensor (PM2.5/PM10) — *under development*
