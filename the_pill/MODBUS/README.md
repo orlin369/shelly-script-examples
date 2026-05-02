@@ -40,5 +40,6 @@ RS485 reliability notes:
 - [`JKESS/`](JKESS/): JK BMS examples
 - [`LinkedGo/`](LinkedGo/): LinkedGo thermostat and thermal pump examples
 - [`MarsRock/`](MarsRock/): MarsRock G2 SUN Series grid-tie inverter examples
+- [`V-TAC/`](V-TAC/): V-TAC hybrid inverter notes, discovered registers, and interpretation work
 - [`wirenboard/`](wirenboard/): Wirenboard industrial sensor examples
-- [`utils/`](utils/): Shared utility scripts (scanner, diagnostics)
+- [`utils/`](utils/): Shared utility scripts (bus scanner, register discovery, diagnostics)
