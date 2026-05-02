@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-05
+- Update `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js` icon mapping so both PV voltage VCs use the larger solar-panel icon and the other Number VCs get explicit voltage, power, and frequency icons
+- Remove the temporary `PV1 Input` and `PV2 Input` text-label components from `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js` and keep only the grouped data VCs
+- Update `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js` so PV inputs have dedicated visible solar-icon label components alongside their progress bars
+- Add `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js`, a Virtual Components variant of the six-register V-TAC example that auto-creates Number VCs and a group on The Pill
+- Change the working V-TAC `5790` power scale assumption from `0.1 W` to `0.01 W` in the six-register example, baseline watcher comments, register proposals, and register table
+- Add `the_pill/MODBUS/V-TAC/vtac_six_register_example.shelly.js`, a compact six-register console example for the current live V-TAC register candidates
+- Comment the latest live-tested V-TAC register hypotheses in `the_pill/MODBUS/V-TAC/vtac_baseline_watch.shelly.js` for ongoing manual validation
+- Add `the_pill/MODBUS/V-TAC/vtac_baseline_watch.shelly.js`, an under-development watcher that polls all currently known readable `VT-66036103` holding and input registers and reports deviations from the saved baseline values
+- Add `the_pill/MODBUS/V-TAC/vtac_inferred_reader.shelly.js`, an under-development console reader that polls the strongest inferred `VT-66036103` holding registers every 15 seconds
+- Move `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` to `the_pill/MODBUS/utils/modbus_register_scan.shelly.js` and document it as a generic MODBUS register-discovery utility
+- Add `the_pill/MODBUS/V-TAC/register-proposals.md` with a first-pass inferred register map for `VT-66036103` based on discovered holding registers and public V-TAC/INVT specifications
+- Remove KVS persistence from `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js`; keep it as a pure register-discovery utility
+- Chunk `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` KVS output across multiple keys so large readable-register arrays fit within Shelly KVS value limits
+- Store readable register-address arrays from `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` in Shelly KVS after the discovery run finishes
+- Expand `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` register-map discovery to walk `FC03` and `FC04` addresses `0..2000` and test both `9600 8N1` and `115200 8N1` at slave `1`
+- Refocus `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` from serial-parameter scanning to register-map discovery: walk `FC03` and `FC04` addresses `0..1000` with single-register reads at known settings `9600 8N1`, slave `1`
+- Add `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` and `the_pill/MODBUS/V-TAC/README.md` to probe RS485/MODBUS settings for the V-TAC `VT-66036103` hybrid inverter from The Pill
 - Promote `http-integrations/ecoflow/stream-ultra/load_balancing_static_vc.shelly.js` and `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` to production
 - Restructure `http-integrations/tasmota/` into collection and device folders; add README files describing the Shelly-to-Tasmota relationship and move `mitsubishi_heavy_ac_vc.shelly.js` into `http-integrations/tasmota/mitsubishi-heavy-ac/`
 - Standardize `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` with repository metadata headers, technical documentation block, sectioned Shelly script layout, and anonymized target labels/IP placeholders
