@@ -12,14 +12,20 @@ This inverter documents RS485 connectivity, but its public manual does not inclu
 
 ## Files
 - [`vtac_six_register_example.shelly.js`](vtac_six_register_example.shelly.js): compact example reader for the six strongest current live-register candidates
-- [`vtac_six_register_example_vc.shelly.js`](vtac_six_register_example_vc.shelly.js): Virtual Components variant of the six-register example that creates six Number VCs, two PV label Text VCs, and updates live values every 15 seconds
-- [`vtac_baseline_watch.shelly.js`](vtac_baseline_watch.shelly.js): under-development baseline watcher that polls all known readable holding and input registers and reports deviations from the saved defaults
-- [`vtac_inferred_reader.shelly.js`](vtac_inferred_reader.shelly.js): under-development console reader built from the current inferred register map
+- [`vtac_six_register_example_vc.shelly.js`](vtac_six_register_example_vc.shelly.js): Virtual Components variant of the six-register example that creates six Number VCs and updates live values every 15 seconds
+- [`vtac_baseline_watch.shelly.js`](vtac_baseline_watch.shelly.js): baseline watcher that polls all known readable holding and input registers and reports deviations from the saved defaults
+- [`vtac_inferred_reader.shelly.js`](vtac_inferred_reader.shelly.js): console reader built from the current inferred register map
 - [`registers.md`](registers.md): discovered holding and input registers captured as tables
 - [`register-proposals.md`](register-proposals.md): inferred register naming, scaling, and grouping proposal based on public V-TAC/INVT data
-- [`label.MD`](label.MD): extracted label information and document links for `VT-66036103`
+- [`label.md`](label.md): extracted label information and document links for `VT-66036103`
 - [`datasheets/`](datasheets/): collected vendor documents and mirrors
 - [`../utils/modbus_register_scan.shelly.js`](../utils/modbus_register_scan.shelly.js): shared single-register discovery utility for `FC03` and `FC04`
+
+## Screenshot
+
+![V-TAC Six Registers Virtual Components](screenshot.png)
+
+This screenshot shows the `vtac_six_register_example_vc.shelly.js` script running on The Pill with the V-TAC inverter connected over RS485. The six Virtual Components — PV1 Voltage (13.3 V), PV2 Voltage (20.6 V), Input Voltage (242 V), Output Voltage (236.7 V), Power (29.47 W), and Frequency (50.05 Hz) — update live every 15 seconds directly in the Shelly app.
 
 ## RS485 Wiring (The Pill 5-Terminal Add-on)
 
