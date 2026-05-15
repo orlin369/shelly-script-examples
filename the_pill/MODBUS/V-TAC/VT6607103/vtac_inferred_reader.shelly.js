@@ -3,7 +3,7 @@
  * @description Reads a small set of inferred holding registers from the
  *   V-TAC VT-66036103 / INVT-family inverter and prints them to the console.
  * @status under development
- * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/V-TAC/vtac_inferred_reader.shelly.js
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/V-TAC/VT6607103/vtac_inferred_reader.shelly.js
  */
 
 /**

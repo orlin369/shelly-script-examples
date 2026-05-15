@@ -3,7 +3,7 @@
  * @description Reads six currently inferred live holding registers from the
  *   V-TAC VT-66036103 and prints them to the console every 15 seconds.
  * @status under development
- * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/V-TAC/vtac_six_register_example.shelly.js
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example.shelly.js
  */
 
 /**

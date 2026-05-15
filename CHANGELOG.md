@@ -3,17 +3,32 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-05
-- Update `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js` icon mapping so both PV voltage VCs use the larger solar-panel icon and the other Number VCs get explicit voltage, power, and frequency icons
-- Remove the temporary `PV1 Input` and `PV2 Input` text-label components from `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js` and keep only the grouped data VCs
-- Update `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js` so PV inputs have dedicated visible solar-icon label components alongside their progress bars
-- Add `the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js`, a Virtual Components variant of the six-register V-TAC example that auto-creates Number VCs and a group on The Pill
+- Add `the_pill/MODBUS/VALIDATION_PROPOSAL.md` with a reusable validation flow for new MODBUS integrations
+- Note that Marstek VenusE signed direction validation requires an office load or charge/discharge test
+- Note that Marstek VenusE 32-bit word-order validation remains open until a non-zero load test is available
+- Mark both Marstek VenusE reader scripts as hardware-tested for live MODBUS reads
+- Mark Marstek VenusE hardware response and Shelly UI screenshot validation as complete
+- Mark the Marstek Venus-E 3.0 RJ45 RS485 pinout as physically confirmed in the device docs
+- Add Marstek VenusE Virtual Components screenshot section to the device README
+- Reduce Marstek VenusE VC script to 10 total Virtual Components so it fits The Pill firmware limits
+- Document Marstek Venus-E 3.0 RS485 RJ45 pinout for The Pill wiring
+- Move VenusE work under `the_pill/MODBUS/Marstek/VenusE/` and add a Marstek vendor README
+- Update The Pill and MODBUS indexes for the new Marstek VenusE folder and the nested V-TAC VT6607103 folder
+- Document Marstek VenusE protocol notes, register CSV, and alarm/fault CSV sources
+- Add Marstek VenusE alarm/fault bit definitions from `modbus marstek - ex_info.csv` and decode active bits in the console reader
+- Update Marstek VenusE MODBUS defaults from the `Venus-E 3.0 485 Protocol` note: address `1`, `115200`, `8N1`
+- Add Marstek VenusE MODBUS register documentation, console and Virtual Component telemetry readers, and validation TODOs
+- Update `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js` icon mapping so both PV voltage VCs use the larger solar-panel icon and the other Number VCs get explicit voltage, power, and frequency icons
+- Remove the temporary `PV1 Input` and `PV2 Input` text-label components from `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js` and keep only the grouped data VCs
+- Update `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js` so PV inputs have dedicated visible solar-icon label components alongside their progress bars
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js`, a Virtual Components variant of the six-register V-TAC example that auto-creates Number VCs and a group on The Pill
 - Change the working V-TAC `5790` power scale assumption from `0.1 W` to `0.01 W` in the six-register example, baseline watcher comments, register proposals, and register table
-- Add `the_pill/MODBUS/V-TAC/vtac_six_register_example.shelly.js`, a compact six-register console example for the current live V-TAC register candidates
-- Comment the latest live-tested V-TAC register hypotheses in `the_pill/MODBUS/V-TAC/vtac_baseline_watch.shelly.js` for ongoing manual validation
-- Add `the_pill/MODBUS/V-TAC/vtac_baseline_watch.shelly.js`, an under-development watcher that polls all currently known readable `VT-66036103` holding and input registers and reports deviations from the saved baseline values
-- Add `the_pill/MODBUS/V-TAC/vtac_inferred_reader.shelly.js`, an under-development console reader that polls the strongest inferred `VT-66036103` holding registers every 15 seconds
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example.shelly.js`, a compact six-register console example for the current live V-TAC register candidates
+- Comment the latest live-tested V-TAC register hypotheses in `the_pill/MODBUS/V-TAC/VT6607103/vtac_baseline_watch.shelly.js` for ongoing manual validation
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_baseline_watch.shelly.js`, an under-development watcher that polls all currently known readable `VT-66036103` holding and input registers and reports deviations from the saved baseline values
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_inferred_reader.shelly.js`, an under-development console reader that polls the strongest inferred `VT-66036103` holding registers every 15 seconds
 - Move `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` to `the_pill/MODBUS/utils/modbus_register_scan.shelly.js` and document it as a generic MODBUS register-discovery utility
-- Add `the_pill/MODBUS/V-TAC/register-proposals.md` with a first-pass inferred register map for `VT-66036103` based on discovered holding registers and public V-TAC/INVT specifications
+- Add `the_pill/MODBUS/V-TAC/VT6607103/register-proposals.md` with a first-pass inferred register map for `VT-66036103` based on discovered holding registers and public V-TAC/INVT specifications
 - Remove KVS persistence from `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js`; keep it as a pure register-discovery utility
 - Chunk `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` KVS output across multiple keys so large readable-register arrays fit within Shelly KVS value limits
 - Store readable register-address arrays from `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` in Shelly KVS after the discovery run finishes

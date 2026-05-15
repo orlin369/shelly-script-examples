@@ -4,7 +4,7 @@
  *   V-TAC VT-66036103, updates Shelly Virtual Components, and prints values
  *   to the console every 15 seconds.
  * @status under development
- * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/V-TAC/vtac_six_register_example_vc.shelly.js
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js
  */
 
 /**
