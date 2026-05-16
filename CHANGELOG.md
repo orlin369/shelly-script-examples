@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-05
+- Add Marstek Venus-E nameplate ratings to device documentation
 - Add `the_pill/MODBUS/VALIDATION_PROPOSAL.md` with a reusable validation flow for new MODBUS integrations
 - Note that Marstek VenusE signed direction validation requires an office load or charge/discharge test
 - Note that Marstek VenusE 32-bit word-order validation remains open until a non-zero load test is available
