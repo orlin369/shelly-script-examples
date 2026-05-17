@@ -210,7 +210,7 @@ function rule_matches_event(rule, event) {
 }
 
 function check_rules(event) {
-  let now = Date.now();
+  let now = Math.floor(Date.now()) / 1000;
   let items = [];
   let parents = {};
 
@@ -239,47 +239,39 @@ function check_rules(event) {
       base_prefix += sanitize_mac(event.address);
     }
 
-    if (rule.parent) {
-      for (let i = 0; i < props.length; i++) {
-        let p = props[i];
-        if (!event.hasOwnProperty(p)) continue;
+    for (let i = 0; i < props.length; i++) {
+      let p = props[i];
+      if (!event.hasOwnProperty(p)) continue;
 
-        let key = base_prefix;
-        if (key) key += "_";
-        key += sanitize_name(p);
+      let key = base_prefix;
+      if (key) key += "_";
+      key += sanitize_name(p);
 
-        if ( !(key in holdoffs) || holdoffs[ key ] < now ) {
+
+      if ( !(key in holdoffs) || holdoffs[ key ] < now ) {
+        if (rule.parent) {
+          if ( key in objects[rule.parent] && objects[rule.parent][key].v == event[p] ) continue;
           objects[rule.parent][key] = {
             v: event[p],
             t: now
           }
-          holdoffs[ key ] = now + rule.hold_off * 60 * 1000;
-        } else
-           console.log("held off " + key + " for " + ( now - holdoffs[ key ] ))
-      }
-      parents[rule.parent] = 1
-    } else {
-      for (let i = 0; i < props.length; i++) {
-        let p = props[i];
-        if (!event.hasOwnProperty(p)) continue;
-
-        let key = base_prefix;
-        if (key) key += "_";
-        key += sanitize_name(p);
-
-        if ( !(key in holdoffs) || holdoffs[ key ] < now ) {
-          items.push({
-            key: key,
-            value: JSON.stringify({
-              v: event[p],
-              t: now
-            })
-          });
-          holdoffs[ key ] = now + rule.hold_off * 60 * 1000;
-        } else
-           console.log("held off " + key + " for " + ( now - holdoffs[ key ] ))
-      }
+          parents[rule.parent] = 1
+          holdoffs[ key ] = now + rule.hold_off * 60;
+        } else {
+            if ( key in cache && cache[key] == event[p] ) continue;
+            cache[key] = event[p];
+            items.push({
+              key: key,
+              value: JSON.stringify({
+                v: event[p],
+                t: now
+              })
+            });
+        }
+      } else
+         console.log("held off " + key + " for " + ( holdoffs[ key ] - now ))
     }
+
     for (let p in parents) {
       if (Object.keys(objects[p]).length > 0) {
         items.push({
