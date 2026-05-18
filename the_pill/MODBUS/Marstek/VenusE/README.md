@@ -21,7 +21,7 @@ power, AC frequency, internal temperature, and inverter state.
 
 ## Files
 - [`venus_e.shelly.js`](venus_e.shelly.js): console telemetry reader for key live/status registers
-- [`venus_e_vc.shelly.js`](venus_e_vc.shelly.js): telemetry reader that creates and updates Shelly Virtual Components
+- [`venus_e_vc.shelly.js`](venus_e_vc.shelly.js): telemetry reader that creates and updates Shelly Virtual Components with label-backed UI ranges
 - [`screenshot.png`](screenshot.png): Shelly UI screenshot of the Virtual Components view
 - [`registers.md`](registers.md): cleaned register reference derived from the Marstek CSV
 - [`modbus marstek - address.csv`](modbus%20marstek%20-%20address.csv): original source register map
@@ -103,28 +103,34 @@ field notes.
 ## Virtual Component Mapping
 `venus_e_vc.shelly.js` creates these components automatically:
 
-| VC ID | Name | Unit |
-|---|---|---|
-| `group:220` | Marstek VenusE | group |
-| `number:220` | Battery Voltage | V |
-| `number:221` | Battery Current | A |
-| `number:222` | Battery Power | W |
-| `number:223` | Battery SOC | % |
-| `number:224` | AC Voltage | V |
-| `number:225` | AC Power | W |
-| `number:226` | AC Frequency | Hz |
-| `number:227` | Internal Temperature | C |
-| `number:228` | Inverter State | raw enum |
+| VC ID | Name | Unit | UI range | Basis |
+|---|---|---|---|---|
+| `group:220` | Marstek VenusE | group | n/a | container |
+| `number:220` | Battery Voltage | V | `0..100` | `51.2 V` nominal battery voltage |
+| `number:221` | Battery Current | A | `-100..100` | `100 Ah` battery capacity; signed register |
+| `number:222` | Battery Power | W | `-2500..2500` | `2500 W / 2500 VA` device rating; signed register |
+| `number:223` | Battery SOC | % | `0..100` | percentage value |
+| `number:224` | AC Voltage | V | `187..253` | label grid voltage range |
+| `number:225` | AC Power | W | `-2500..2500` | `2500 W / 2500 VA` device rating; signed register |
+| `number:226` | AC Frequency | Hz | `45..55` | `50 Hz` nominal grid frequency with validation headroom |
+| `number:227` | Internal Temperature | C | `-10..55` | label operating ambient range |
+| `number:228` | Inverter State | raw enum | `0..6` | documented state enum |
 
 The Pill currently supports 10 Virtual Components total on the tested
 firmware, so the VC script uses one group plus nine high-priority telemetry
 numbers. Daily energy values remain available in the console reader
 `venus_e.shelly.js`.
 
+The power component ranges intentionally use `2500 W` instead of `5000 W`.
+The label identifies this as a `MST-BIE5-2500` unit with `5120 Wh` battery
+energy and `2500 W / 2500 VA` power ratings, so `5000` would describe battery
+energy class rather than instantaneous inverter power.
+
 ## Notes
 - The scripts intentionally do not write registers.
 - Register `42000` appears to gate RS485 control mode for control registers `42000-42999`; this needs manual validation before any write script is added.
 - Register `32202` says positive AC power means feed-in to the grid.
+- Register `32204` is live-tested with `0.1 Hz` scaling on this device, despite the source CSV showing `0.01 Hz`.
 - 32-bit word order is still open because the initial hardware test had no load and did not produce useful non-zero 32-bit power/energy values.
 - Register `35100` currently maps `0=sleep`, `1=standby`, `2=charge`, `3=discharge`, `4=backup mode`, `5=OTA upgrade`, `6=bypass`.
 - `venus_e.shelly.js` decodes active alarm/fault bit labels from `modbus marstek - ex_info.csv`.

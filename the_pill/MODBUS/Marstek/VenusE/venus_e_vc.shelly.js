@@ -14,15 +14,15 @@
  *
  * Virtual Components created:
  * - group:220   Marstek VenusE
- * - number:220  Battery Voltage
- * - number:221  Battery Current
- * - number:222  Battery Power
- * - number:223  Battery SOC
- * - number:224  AC Voltage
- * - number:225  AC Power
- * - number:226  AC Frequency
- * - number:227  Internal Temperature
- * - number:228  Inverter State
+ * - number:220  Battery Voltage, 0..100 V
+ * - number:221  Battery Current, -100..100 A
+ * - number:222  Battery Power, -2500..2500 W
+ * - number:223  Battery SOC, 0..100 %
+ * - number:224  AC Voltage, 187..253 V
+ * - number:225  AC Power, -2500..2500 W
+ * - number:226  AC Frequency, 45..55 Hz
+ * - number:227  Internal Temperature, -10..55 C
+ * - number:228  Inverter State, 0..6
  *
  * Important:
  * - Documented communication defaults are address 1, 115200 baud, 8 data
@@ -50,15 +50,15 @@ var COMPONENT_IDS = {
 };
 
 var ENTITIES = [
-  { name: 'Battery Voltage', addr: 32100, qty: 1, type: 'u16', scale: 0.01, unit: 'V', vcId: 'number:220', vcHandle: null },
-  { name: 'Battery Current', addr: 32101, qty: 1, type: 's16', scale: 0.01, unit: 'A', vcId: 'number:221', vcHandle: null },
-  { name: 'Battery Power', addr: 32102, qty: 2, type: 's32', scale: 1, unit: 'W', vcId: 'number:222', vcHandle: null },
-  { name: 'Battery SOC', addr: 32104, qty: 1, type: 'u16', scale: 1, unit: '%', vcId: 'number:223', vcHandle: null },
-  { name: 'AC Voltage', addr: 32200, qty: 1, type: 'u16', scale: 0.1, unit: 'V', vcId: 'number:224', vcHandle: null },
-  { name: 'AC Power', addr: 32202, qty: 2, type: 's32', scale: 1, unit: 'W', vcId: 'number:225', vcHandle: null },
-  { name: 'AC Frequency', addr: 32204, qty: 1, type: 'u16', scale: 0.01, unit: 'Hz', vcId: 'number:226', vcHandle: null },
-  { name: 'Internal Temperature', addr: 35000, qty: 1, type: 's16', scale: 0.1, unit: 'C', vcId: 'number:227', vcHandle: null },
-  { name: 'Inverter State', addr: 35100, qty: 1, type: 'u16', scale: 1, unit: '', vcId: 'number:228', vcHandle: null },
+  { name: 'Battery Voltage', addr: 32100, qty: 1, type: 'u16', scale: 0.01, unit: 'V', min: 0, max: 100, vcId: 'number:220', vcHandle: null },
+  { name: 'Battery Current', addr: 32101, qty: 1, type: 's16', scale: 0.01, unit: 'A', min: -100, max: 100, vcId: 'number:221', vcHandle: null },
+  { name: 'Battery Power', addr: 32102, qty: 2, type: 's32', scale: 1, unit: 'W', min: -2500, max: 2500, vcId: 'number:222', vcHandle: null },
+  { name: 'Battery SOC', addr: 32104, qty: 1, type: 'u16', scale: 1, unit: '%', min: 0, max: 100, vcId: 'number:223', vcHandle: null },
+  { name: 'AC Voltage', addr: 32200, qty: 1, type: 'u16', scale: 0.1, unit: 'V', min: 187, max: 253, defaultValue: 230, vcId: 'number:224', vcHandle: null },
+  { name: 'AC Power', addr: 32202, qty: 2, type: 's32', scale: 1, unit: 'W', min: -2500, max: 2500, vcId: 'number:225', vcHandle: null },
+  { name: 'AC Frequency', addr: 32204, qty: 1, type: 'u16', scale: 0.1, unit: 'Hz', min: 45, max: 55, defaultValue: 50, vcId: 'number:226', vcHandle: null },
+  { name: 'Internal Temperature', addr: 35000, qty: 1, type: 's16', scale: 0.1, unit: 'C', min: -10, max: 55, vcId: 'number:227', vcHandle: null },
+  { name: 'Inverter State', addr: 35100, qty: 1, type: 'u16', scale: 1, unit: '', min: 0, max: 6, vcId: 'number:228', vcHandle: null },
 ];
 
 // ============================================================================
@@ -193,11 +193,14 @@ function ensureComponent(type, id, config, cb) {
 }
 
 function numberConfig(entity) {
+  var defaultValue = 0;
+  if (entity.defaultValue !== undefined) defaultValue = entity.defaultValue;
+
   return {
     name: entity.name,
-    default_value: 0,
-    min: -999999999,
-    max: 999999999,
+    default_value: defaultValue,
+    min: entity.min,
+    max: entity.max,
     meta: {
       ui: {
         view: 'progressbar',

@@ -47,7 +47,7 @@ var ENTITIES = [
   { name: 'Battery Total Energy', addr: 32105, qty: 1, type: 'u16', scale: 0.001, unit: 'kWh' },
   { name: 'AC Voltage', addr: 32200, qty: 1, type: 'u16', scale: 0.1, unit: 'V' },
   { name: 'AC Power', addr: 32202, qty: 2, type: 's32', scale: 1, unit: 'W' },
-  { name: 'AC Frequency', addr: 32204, qty: 1, type: 'u16', scale: 0.01, unit: 'Hz' },
+  { name: 'AC Frequency', addr: 32204, qty: 1, type: 'u16', scale: 0.1, unit: 'Hz' },
   { name: 'AC Offgrid Voltage', addr: 32300, qty: 1, type: 'u16', scale: 0.1, unit: 'V' },
   { name: 'AC Offgrid Power', addr: 32302, qty: 2, type: 's32', scale: 1, unit: 'W' },
   { name: 'Daily Charging Energy', addr: 33004, qty: 2, type: 'u32', scale: 0.01, unit: 'kWh' },
