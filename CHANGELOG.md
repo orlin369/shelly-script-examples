@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-05
+- Promote Marstek VenusE read-only MODBUS telemetry scripts to production after hardware validation on The Pill
 - Add `venus_e_status_vc.shelly.js`, a status-focused Marstek VenusE Virtual Components layout for SOC, limits, temperatures, daily energy, operating state, and alarm/fault count
 - Add label-backed Marstek VenusE Virtual Component min/max ranges to the VC setup script and device README
 - Correct Marstek VenusE AC frequency scaling to `0.1 Hz` based on live register value
