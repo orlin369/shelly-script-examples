@@ -22,6 +22,7 @@ power, AC frequency, internal temperature, and inverter state.
 ## Files
 - [`venus_e.shelly.js`](venus_e.shelly.js): console telemetry reader for key live/status registers
 - [`venus_e_vc.shelly.js`](venus_e_vc.shelly.js): telemetry reader that creates and updates Shelly Virtual Components with label-backed UI ranges
+- [`venus_e_status_vc.shelly.js`](venus_e_status_vc.shelly.js): status-focused Virtual Components reader for SOC, limits, temperatures, daily energy, operating state, and alarm/fault count
 - [`screenshot.png`](screenshot.png): Shelly UI screenshot of the Virtual Components view
 - [`registers.md`](registers.md): cleaned register reference derived from the Marstek CSV
 - [`modbus marstek - address.csv`](modbus%20marstek%20-%20address.csv): original source register map
@@ -49,7 +50,7 @@ Protocol information from the Venus-E 3.0 485 protocol notes:
 | Change note | first version |
 
 ## Communication
-Documented defaults in both scripts:
+Documented defaults in the VenusE scripts:
 
 | Parameter | Value |
 |---|---|
@@ -62,6 +63,9 @@ Documented defaults in both scripts:
 The device has been verified to respond with these settings on The Pill.
 Both `venus_e.shelly.js` and `venus_e_vc.shelly.js` have been tested on the
 target device and successfully read live MODBUS values.
+`venus_e_status_vc.shelly.js` has also been uploaded to the target device and
+verified to reconfigure the same Virtual Components into the status-focused
+layout.
 
 ## RS485 Wiring (The Pill 5-Terminal Add-on)
 
@@ -125,6 +129,24 @@ The power component ranges intentionally use `2500 W` instead of `5000 W`.
 The label identifies this as a `MST-BIE5-2500` unit with `5120 Wh` battery
 energy and `2500 W / 2500 VA` power ratings, so `5000` would describe battery
 energy class rather than instantaneous inverter power.
+
+## Status Virtual Component Mapping
+`venus_e_status_vc.shelly.js` is a third, status-focused VC layout. It reuses
+the same `group:220` and `number:220..228` component IDs, so upload only one
+VenusE VC script at a time on The Pill.
+
+| VC ID | Name | Unit | UI range | Source |
+|---|---|---|---|---|
+| `group:220` | Marstek VenusE Status | group | n/a | container |
+| `number:220` | Battery SOC | % | `0..100` | register `32104` |
+| `number:221` | Charge Current Limit | A | `0..100` | register `35111` |
+| `number:222` | Discharge Current Limit | A | `0..100` | register `35112` |
+| `number:223` | Internal Temperature | C | `-10..55` | register `35000` |
+| `number:224` | Max Cell Temperature | C | `-10..80` | register `35010` |
+| `number:225` | Daily Charging Energy | kWh | `0..100` | register `33004` |
+| `number:226` | Daily Discharging Energy | kWh | `0..100` | register `33006` |
+| `number:227` | Inverter State | raw enum | `0..6` | register `35100` |
+| `number:228` | Alarm/Fault Count | active bits | `0..45` | registers `36000`, `36001`, `36100`, `36101`, `36103`, `36104` |
 
 ## Notes
 - The scripts intentionally do not write registers.
