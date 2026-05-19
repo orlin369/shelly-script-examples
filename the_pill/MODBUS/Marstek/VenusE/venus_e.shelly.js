@@ -2,7 +2,7 @@
  * @title Marstek VenusE MODBUS-RTU reader
  * @description Reads live battery, AC, energy, temperature, state, alarm, and
  *   limit registers from a Marstek VenusE device over MODBUS-RTU.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/Marstek/VenusE/venus_e.shelly.js
  */
 

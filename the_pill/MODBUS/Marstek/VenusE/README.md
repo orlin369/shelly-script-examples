@@ -31,10 +31,13 @@ power, AC frequency, internal temperature, and inverter state.
 - [`TODO.md`](TODO.md): remaining validation and implementation tasks
 
 ## Status
-These files are marked `under development` until the following are confirmed on hardware:
-- 32-bit word order
-- signed values for current and power
-- alarm/fault bit behavior on real hardware
+The read-only VenusE telemetry scripts are marked `production` after hardware
+validation on The Pill. They do not write control registers.
+
+Open validation items before adding any control/write script:
+- 32-bit word order under non-zero load
+- signed direction for current and power
+- alarm/fault bit behavior during real warning or fault conditions
 - whether the device accepts FC06/FC10 writes safely
 
 ## Protocol Source

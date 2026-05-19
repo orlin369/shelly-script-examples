@@ -2,7 +2,7 @@
  * @title Marstek VenusE MODBUS-RTU reader + Virtual Components
  * @description Reads key Marstek VenusE live MODBUS registers and
  *   updates Shelly Virtual Components for battery, AC, energy, and status data.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/Marstek/VenusE/venus_e_vc.shelly.js
  */
 
