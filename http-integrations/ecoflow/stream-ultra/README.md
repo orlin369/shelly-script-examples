@@ -11,7 +11,11 @@ A home energy setup with a STREAM Ultra battery needs to automatically switch be
 - Installer commissioning a STREAM Ultra alongside Shelly metering
 
 ## Files
-- [`load_balancing_static.shelly.js`](load_balancing_static.shelly.js): polls Shelly meters, dispatches charge / discharge / idle commands to the STREAM Ultra
+
+| File | Status | Description |
+|------|--------|-------------|
+| [`load_balancing_static_vc.shelly.js`](load_balancing_static_vc.shelly.js) | production | Creates Shelly Virtual Components, polls Shelly meters, and dispatches charge / discharge / idle commands to the STREAM Ultra. |
+| [`load_balancing_static.shelly.js`](load_balancing_static.shelly.js) | under development | Console/static-config variant without the production VC dashboard flow. |
 
 ## Modes
 
@@ -64,6 +68,11 @@ var DEVICES_CFG = [
 2. Create an app and copy the **Access Key** and **Secret Key**.
 3. Find your STREAM Ultra **serial number** in the EcoFlow app under device settings.
 4. Fill in `CONFIG.accessKey`, `CONFIG.secretKey`, and `CONFIG.serial`.
+
+## Screenshot
+This screenshot shows the EcoFlow STREAM Ultra Virtual Components group in the Shelly app with Battery SOC, Battery Power, PV Power, Grid Power, Load Power, Backup Reserve SOC, Meters Total, Feed Grid, and Night Mode updating in real time.
+
+![EcoFlow STREAM Ultra screenshot](screenshot.png)
 
 ## References
 - [EcoFlow Open Platform (EU)](https://developer-eu.ecoflow.com)

@@ -2,7 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-05
+- Add `venus_e_status_vc.shelly.js`, a status-focused Marstek VenusE Virtual Components layout for SOC, limits, temperatures, daily energy, operating state, and alarm/fault count
+- Add label-backed Marstek VenusE Virtual Component min/max ranges to the VC setup script and device README
+- Correct Marstek VenusE AC frequency scaling to `0.1 Hz` based on live register value
+- Add Marstek Venus-E nameplate ratings to device documentation
+- Add `the_pill/MODBUS/VALIDATION_PROPOSAL.md` with a reusable validation flow for new MODBUS integrations
+- Note that Marstek VenusE signed direction validation requires an office load or charge/discharge test
+- Note that Marstek VenusE 32-bit word-order validation remains open until a non-zero load test is available
+- Mark both Marstek VenusE reader scripts as hardware-tested for live MODBUS reads
+- Mark Marstek VenusE hardware response and Shelly UI screenshot validation as complete
+- Mark the Marstek Venus-E 3.0 RJ45 RS485 pinout as physically confirmed in the device docs
+- Add Marstek VenusE Virtual Components screenshot section to the device README
+- Reduce Marstek VenusE VC script to 10 total Virtual Components so it fits The Pill firmware limits
+- Document Marstek Venus-E 3.0 RS485 RJ45 pinout for The Pill wiring
+- Move VenusE work under `the_pill/MODBUS/Marstek/VenusE/` and add a Marstek vendor README
+- Update The Pill and MODBUS indexes for the new Marstek VenusE folder and the nested V-TAC VT6607103 folder
+- Document Marstek VenusE protocol notes, register CSV, and alarm/fault CSV sources
+- Add Marstek VenusE alarm/fault bit definitions from `modbus marstek - ex_info.csv` and decode active bits in the console reader
+- Update Marstek VenusE MODBUS defaults from the `Venus-E 3.0 485 Protocol` note: address `1`, `115200`, `8N1`
+- Add Marstek VenusE MODBUS register documentation, console and Virtual Component telemetry readers, and validation TODOs
+- Update `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js` icon mapping so both PV voltage VCs use the larger solar-panel icon and the other Number VCs get explicit voltage, power, and frequency icons
+- Remove the temporary `PV1 Input` and `PV2 Input` text-label components from `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js` and keep only the grouped data VCs
+- Update `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js` so PV inputs have dedicated visible solar-icon label components alongside their progress bars
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example_vc.shelly.js`, a Virtual Components variant of the six-register V-TAC example that auto-creates Number VCs and a group on The Pill
+- Change the working V-TAC `5790` power scale assumption from `0.1 W` to `0.01 W` in the six-register example, baseline watcher comments, register proposals, and register table
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_six_register_example.shelly.js`, a compact six-register console example for the current live V-TAC register candidates
+- Comment the latest live-tested V-TAC register hypotheses in `the_pill/MODBUS/V-TAC/VT6607103/vtac_baseline_watch.shelly.js` for ongoing manual validation
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_baseline_watch.shelly.js`, an under-development watcher that polls all currently known readable `VT-66036103` holding and input registers and reports deviations from the saved baseline values
+- Add `the_pill/MODBUS/V-TAC/VT6607103/vtac_inferred_reader.shelly.js`, an under-development console reader that polls the strongest inferred `VT-66036103` holding registers every 15 seconds
+- Move `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` to `the_pill/MODBUS/utils/modbus_register_scan.shelly.js` and document it as a generic MODBUS register-discovery utility
+- Add `the_pill/MODBUS/V-TAC/VT6607103/register-proposals.md` with a first-pass inferred register map for `VT-66036103` based on discovered holding registers and public V-TAC/INVT specifications
+- Remove KVS persistence from `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js`; keep it as a pure register-discovery utility
+- Chunk `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` KVS output across multiple keys so large readable-register arrays fit within Shelly KVS value limits
+- Store readable register-address arrays from `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` in Shelly KVS after the discovery run finishes
+- Expand `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` register-map discovery to walk `FC03` and `FC04` addresses `0..2000` and test both `9600 8N1` and `115200 8N1` at slave `1`
+- Refocus `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` from serial-parameter scanning to register-map discovery: walk `FC03` and `FC04` addresses `0..1000` with single-register reads at known settings `9600 8N1`, slave `1`
+- Add `the_pill/MODBUS/V-TAC/vtac_modbus_scan.shelly.js` and `the_pill/MODBUS/V-TAC/README.md` to probe RS485/MODBUS settings for the V-TAC `VT-66036103` hybrid inverter from The Pill
+- Promote `http-integrations/ecoflow/stream-ultra/load_balancing_static_vc.shelly.js` and `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` to production
+- Restructure `http-integrations/tasmota/` into collection and device folders; add README files describing the Shelly-to-Tasmota relationship and move `mitsubishi_heavy_ac_vc.shelly.js` into `http-integrations/tasmota/mitsubishi-heavy-ac/`
+- Standardize `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` with repository metadata headers, technical documentation block, sectioned Shelly script layout, and anonymized target labels/IP placeholders
+- Add `http-integrations/ecoflow/stream-ultra/` with static-config EcoFlow STREAM Ultra load-balancing scripts, screenshot, and README files; add parent `http-integrations/ecoflow/README.md`
+- Simplify `the_pill/MODBUS/` documentation by removing duplicated per-device RS485 pinout text and a redundant root index screenshot/list entries
+
 ## 2026-04
+- Restore `http-integrations/fronius/integration.shelly.js` unchanged and add `http-integrations/fronius/integration-dashboard.shelly.js` as a local-only under-development multi-channel Fronius dashboard variant with 10 VC slots, integrated kWh logging, runtime VC metadata updates, and configurable lookup paths for battery, Wattpilot, and ELWA data
+- Fix `http-integrations/fronius/integration.shelly.js` to use Shelly Virtual Component handles with typed VC keys (`number:200`-`number:203`) and restore valid Fronius HTTP polling
 - Replace per-device text wiring descriptions with a unified ASCII art diagram in all 23 `the_pill/MODBUS/**/*.shelly.js` examples
 - Promote `the_pill/MODBUS/MarsRock/SUN-G2/sun_g2.shelly.js`, `sun_g2_vc.shelly.js`, `wirenboard/WB-MIR-v-3/wb_mir_v3_ir.shelly.js`, `ComWinTop/mb308v.shelly.js`, and `mb308v_vc.shelly.js` to production
 - Refactor `the_pill/MODBUS/ComWinTop/mb308v.shelly.js`: replace verbose `ENTITIES` array, `FC` map, and `CRC_TABLE` with compact count variables; update `SLAVE_ID` to 2

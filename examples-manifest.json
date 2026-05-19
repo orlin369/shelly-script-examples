@@ -200,6 +200,11 @@
     "description": "Example of reading Switch component's status."
   },
   {
+    "fname": "http-integrations/ecoflow/stream-ultra/load_balancing_static_vc.shelly.js",
+    "title": "EcoFlow STREAM Ultra Load Balancing with Virtual Components (static config)",
+    "description": "Polls Shelly EM / Plug S Gen3 devices and controls an EcoFlow"
+  },
+  {
     "fname": "http-integrations/finance-yahoo/stock-monitor_vc.shelly.js",
     "title": "Yahoo Finance stock monitor with virtual components",
     "description": "Polls Yahoo Finance chart API for a stock symbol and updates"
@@ -228,6 +233,11 @@
     "fname": "http-integrations/push-pushed/push-pushed.shelly.js",
     "title": "Push notifications using Pushed service",
     "description": "Use a script to notify directly on your mobile phone via a push notification service."
+  },
+  {
+    "fname": "http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js",
+    "title": "Mitsubishi Heavy AC control via Tasmota IR bridge",
+    "description": "Creates Virtual Components for Mitsubishi Heavy HVAC control"
   },
   {
     "fname": "http-integrations/telegram/telegram-interaction.shelly.js",
