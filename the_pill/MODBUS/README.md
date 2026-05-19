@@ -31,6 +31,7 @@ RS485 reliability notes:
 
 ## Structure
 - [`modbus_rtu.shelly.js`](modbus_rtu.shelly.js): reusable MODBUS master core
+- [`VALIDATION_PROPOSAL.md`](VALIDATION_PROPOSAL.md): proposed validation checklist for new MODBUS integrations
 - [`ComWinTop/`](ComWinTop/): CWT-MB308V IO module examples
 - [`Davis/`](Davis/): Davis pyranometer solar irradiance reader
 - [`Deye/`](Deye/): Deye inverter readers (plain + VC)
@@ -39,6 +40,8 @@ RS485 reliability notes:
 - [`HTTP-Bridge/`](HTTP-Bridge/): MODBUS-RTU to HTTP bridge
 - [`JKESS/`](JKESS/): JK BMS examples
 - [`LinkedGo/`](LinkedGo/): LinkedGo thermostat and thermal pump examples
+- [`Marstek/`](Marstek/): Marstek VenusE energy-storage MODBUS examples
 - [`MarsRock/`](MarsRock/): MarsRock G2 SUN Series grid-tie inverter examples
+- [`V-TAC/`](V-TAC/): V-TAC hybrid inverter notes and VT6607103 interpretation work
 - [`wirenboard/`](wirenboard/): Wirenboard industrial sensor examples
-- [`utils/`](utils/): Shared utility scripts (scanner, diagnostics)
+- [`utils/`](utils/): Shared utility scripts (bus scanner, register discovery, diagnostics)

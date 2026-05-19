@@ -171,6 +171,10 @@ howto/switch-read.shelly.js: Example - Reading Switch status
 ===
 Example of reading Switch component's status.
 
+http-integrations/ecoflow/stream-ultra/load_balancing_static_vc.shelly.js: EcoFlow STREAM Ultra Load Balancing with Virtual Components (static config)
+===
+Polls Shelly EM / Plug S Gen3 devices and controls an EcoFlow
+
 http-integrations/finance-yahoo/stock-monitor_vc.shelly.js: Yahoo Finance stock monitor with virtual components
 ===
 Polls Yahoo Finance chart API for a stock symbol and updates
@@ -196,6 +200,10 @@ This script exposes a /status endpoint that returns Prometheus metrics that can 
 http-integrations/push-pushed/push-pushed.shelly.js: Push notifications using Pushed service
 ===
 Use a script to notify directly on your mobile phone via a push notification service.
+
+http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js: Mitsubishi Heavy AC control via Tasmota IR bridge
+===
+Creates Virtual Components for Mitsubishi Heavy HVAC control
 
 http-integrations/telegram/telegram-interaction.shelly.js: Telegram interaction with Shelly script
 ===

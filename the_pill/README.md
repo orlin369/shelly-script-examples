@@ -17,6 +17,8 @@ its own README with wiring, setup, and usage details.
   - [utils/](MODBUS/utils/) — universal MODBUS-RTU scanner — *production*
   - [ComWinTop/](MODBUS/ComWinTop/) — CWT-MB308V IO module + Virtual Components — *under development*
   - [LinkedGo/R290/](MODBUS/LinkedGo/R290/) — LinkedGo R290 air-to-water heat pump — *under development*
+  - [Marstek/VenusE/](MODBUS/Marstek/VenusE/) — Marstek VenusE energy-storage telemetry — *under development*
+  - [V-TAC/VT6607103/](MODBUS/V-TAC/VT6607103/) — V-TAC hybrid inverter register discovery — *under development*
   - [HTTP-Bridge/](MODBUS/HTTP-Bridge/) — MODBUS-RTU HTTP bridge — *under development*
 - **[iRobotRoomba/](iRobotRoomba/)** — iRobot Roomba Open Interface control — *under development*
 - **[RFID-RC522/](RFID-RC522/)** — MFRC522 RFID reader (UART) — *under development*
