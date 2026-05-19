@@ -480,6 +480,18 @@ the_pill/MODBUS/MarsRock/SUN-G2/sun_g2_vc.shelly.js: MarsRock G2 SUN Series Grid
 ===
 Reads AC output power, AC grid voltage, DC input voltage, and
 
+the_pill/MODBUS/Marstek/VenusE/venus_e.shelly.js: Marstek VenusE MODBUS-RTU reader
+===
+Reads live battery, AC, energy, temperature, state, alarm, and
+
+the_pill/MODBUS/Marstek/VenusE/venus_e_status_vc.shelly.js: Marstek VenusE status MODBUS-RTU reader + Virtual Components
+===
+Reads Marstek VenusE SOC, charge/discharge limits,
+
+the_pill/MODBUS/Marstek/VenusE/venus_e_vc.shelly.js: Marstek VenusE MODBUS-RTU reader + Virtual Components
+===
+Reads key Marstek VenusE live MODBUS registers and
+
 the_pill/MODBUS/utils/modbus_scan.shelly.js: Universal MODBUS-RTU Scanner
 ===
 Discovers MODBUS-RTU slave devices by scanning all combinations

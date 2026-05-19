@@ -554,6 +554,21 @@
     "description": "Reads AC output power, AC grid voltage, DC input voltage, and"
   },
   {
+    "fname": "the_pill/MODBUS/Marstek/VenusE/venus_e.shelly.js",
+    "title": "Marstek VenusE MODBUS-RTU reader",
+    "description": "Reads live battery, AC, energy, temperature, state, alarm, and"
+  },
+  {
+    "fname": "the_pill/MODBUS/Marstek/VenusE/venus_e_status_vc.shelly.js",
+    "title": "Marstek VenusE status MODBUS-RTU reader + Virtual Components",
+    "description": "Reads Marstek VenusE SOC, charge/discharge limits,"
+  },
+  {
+    "fname": "the_pill/MODBUS/Marstek/VenusE/venus_e_vc.shelly.js",
+    "title": "Marstek VenusE MODBUS-RTU reader + Virtual Components",
+    "description": "Reads key Marstek VenusE live MODBUS registers and"
+  },
+  {
     "fname": "the_pill/MODBUS/utils/modbus_scan.shelly.js",
     "title": "Universal MODBUS-RTU Scanner",
     "description": "Discovers MODBUS-RTU slave devices by scanning all combinations"
