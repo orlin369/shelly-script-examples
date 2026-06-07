@@ -14,11 +14,11 @@ A site with both a grid connection and a backup source (generator, inverter, UPS
 
 ## Scripts
 
-### [`iats_grid_backup_controller.shelly.js`](https://github.com/orlin369/shelly-script-examples/blob/main/power-energy/automatic-transfer-switch/iats_grid_backup_controller.shelly.js)
+### [`iats_grid_backup_controller.shelly.js`](https://github.com/ALLTERCO/shelly-script-examples/blob/main/power-energy/automatic-transfer-switch/iats_grid_backup_controller.shelly.js)
 
 The main controller script, designed to run on the **Shelly Pro 2** (and compatible two-channel devices). It continuously polls `input:0` (grid available) and `input:1` (backup available), computes the correct source using the truth table, and drives `switch:1` (K1 grid contactor) and `switch:0` (K2 backup contactor) accordingly. On boot it detaches both inputs from the outputs so the Shelly firmware cannot bypass the script logic. Every source change follows a strict open-both → wait → close-target sequence to prevent contactors from being energised in parallel. An optional KVS key lets the Sensor Add-on helper override the mode to MANUAL without the controller needing to know anything about the operator panel.
 
-### [`iats_sensor_addon_manual_control.shelly.js`](https://github.com/orlin369/shelly-script-examples/blob/main/power-energy/automatic-transfer-switch/iats_sensor_addon_manual_control.shelly.js)
+### [`iats_sensor_addon_manual_control.shelly.js`](https://github.com/ALLTERCO/shelly-script-examples/blob/main/power-energy/automatic-transfer-switch/iats_sensor_addon_manual_control.shelly.js)
 
 An optional companion script for the **Shelly Pro Sensor Add-on**. It reads DIN0 (`input:100`, AUTO/MANUAL selector) and DIN1 (`input:101`, GRID/PV selector) and publishes the current selection to the shared KVS key at a configurable interval. It never touches `switch:0` or `switch:1` — source availability is still validated by the controller before any contactor closes. An incrementing sequence number in the published value acts as a heartbeat; the controller reverts to AUTO mode automatically if the sequence stops updating.
 
