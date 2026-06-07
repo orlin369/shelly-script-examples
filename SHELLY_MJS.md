@@ -316,6 +316,14 @@ power-energy/advanced-load-shedding.shelly.js: Advanced Load shedding with sched
 ===
 Adds schedule, device, and notification templates and functionality to the original load shedding script.
 
+power-energy/automatic-transfer-switch/iats_grid_backup_controller.shelly.js: iATS two-channel grid/backup automatic transfer switch controller
+===
+Controls K1 (grid) and K2 (backup) contactors on a two-channel Shelly device (Pro 2, Pro 2PM, Plus 2PM, 2PM Gen3/Gen4 in switch profile). SW1/input:0 = grid available; SW2/input:1 = backup available. Grid is preferred when both sources are present. Physical inputs are detached from outputs on boot — this script is the sole owner of switch:0 (K2) and switch:1 (K1). Both outputs are opened before a transfer; a configurable delay prevents contactor overlap. Optional manual override is received from the Sensor Add-on helper via KVS; a stale-sequence watchdog reverts to AUTO when the helper stops publishing.
+
+power-energy/automatic-transfer-switch/iats_sensor_addon_manual_control.shelly.js: iATS Sensor Add-on manual control helper
+===
+Companion script for the iATS controller, running on the Shelly Pro Sensor Add-on. DIN0 (input:100) selects AUTO vs MANUAL mode; DIN1 (input:101) selects GRID vs PV target. Publishes the current selection to KVS at a configurable interval. Does not touch relay outputs — iats_grid_backup_controller.shelly.js remains the sole owner of switch:0/1 and validates source availability before acting on any manual request.
+
 power-energy/consume-limited-power.shelly.js: Shelly Plus 1PM - Stop the output after consuming certain amount of power
 ===
 This script listens for the event when the output is turned on, and starts counting the power reported in NotifyStatus
