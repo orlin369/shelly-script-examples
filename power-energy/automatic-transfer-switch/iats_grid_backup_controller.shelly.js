@@ -1,38 +1,15 @@
-/*
- * iATS two-channel Shelly controller.
- *
- * Supported devices:
- * - Shelly Pro 2
- * - Shelly Pro 2PM
- * - Shelly Plus 2PM
- * - Shelly 2PM Gen3 / Gen4
- *
- * Requirements:
- * - The device must support Shelly Scripts.
- * - PM devices must use the "switch" profile, not the "cover" profile.
- * - The device must expose input:0, input:1, switch:0, and switch:1.
- *
- * Logic:
- * - SW1 / input:0 = grid available
- * - SW2 / input:1 = backup available
- * - O2  / switch:1 = K1 grid contactor command
- * - O1  / switch:0 = K2 backup contactor command
- *
- * Truth table:
- *   SW2 SW1 | O2 O1 | State
- *    0   0  | 0  0  | OFF
- *    0   1  | 1  0  | GRID
- *    1   0  | 0  1  | BACKUP
- *    1   1  | 1  0  | GRID priority
- *
- * Safety behavior:
- * - The script never intentionally turns both outputs on.
- * - Before selecting a new source, it opens both outputs.
- * - It waits TRANSFER_DELAY_MS before closing the selected contactor.
- * - Physical inputs are detached from outputs and verified on startup.
- * - Initialization stops with both outputs off if detachment fails.
- * - Optional manual control is received from the Sensor Add-on helper
- *   through KVS. This script remains the only owner of switch:0/1.
+/**
+ * @title iATS two-channel grid/backup automatic transfer switch controller
+ * @description Controls K1 (grid) and K2 (backup) contactors on a two-channel Shelly device
+ *   (Pro 2, Pro 2PM, Plus 2PM, 2PM Gen3/Gen4 in switch profile).
+ *   SW1/input:0 = grid available; SW2/input:1 = backup available.
+ *   Grid is preferred when both sources are present. Physical inputs are detached from
+ *   outputs on boot — this script is the sole owner of switch:0 (K2) and switch:1 (K1).
+ *   Both outputs are opened before a transfer; a configurable delay prevents contactor overlap.
+ *   Optional manual override is received from the Sensor Add-on helper via KVS;
+ *   a stale-sequence watchdog reverts to AUTO when the helper stops publishing.
+ * @status production
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/power-energy/automatic-transfer-switch/iats_grid_backup_controller.shelly.js
  */
 
 var INPUT_GRID = 0;       // SW1

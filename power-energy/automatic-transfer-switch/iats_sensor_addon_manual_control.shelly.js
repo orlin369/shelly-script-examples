@@ -1,19 +1,12 @@
-/*
- * iATS manual selector for the Shelly Pro Sensor Add-on.
- *
- * Input mapping:
- * - DIN0 / input:100 = AUTO / MANUAL
- * - DIN1 / input:101 = GRID / PV
- *
- * Default polarity:
- * - DIN0 LOW  = AUTO
- * - DIN0 HIGH = MANUAL
- * - DIN1 LOW  = GRID
- * - DIN1 HIGH = PV / backup
- *
- * This script does not control relay outputs. It publishes the requested
- * mode to KVS; iats_grid_backup_controller.shelly.js remains the only owner
- * of switch:0 and switch:1 and validates source availability before closing.
+/**
+ * @title iATS Sensor Add-on manual control helper
+ * @description Companion script for the iATS controller, running on the Shelly Pro Sensor Add-on.
+ *   DIN0 (input:100) selects AUTO vs MANUAL mode; DIN1 (input:101) selects GRID vs PV target.
+ *   Publishes the current selection to KVS at a configurable interval. Does not touch relay
+ *   outputs — iats_grid_backup_controller.shelly.js remains the sole owner of switch:0/1
+ *   and validates source availability before acting on any manual request.
+ * @status production
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/power-energy/automatic-transfer-switch/iats_sensor_addon_manual_control.shelly.js
  */
 
 var INPUT_AUTO_MANUAL = 100;
