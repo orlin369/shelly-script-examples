@@ -1,3 +1,13 @@
+/**
+ * @title Victron Energy virtual Number components provisioning
+ * @description One-shot script that creates and configures nine virtual Number components
+ *   (IDs 220–228) for live Victron telemetry and groups them under "Victron Energy" (group 219).
+ *   Each component is configured with a progressbar UI hint. Safe to re-run — Virtual.Add
+ *   skips components that already exist. Calls die() on completion to free memory.
+ * @status production
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/power-energy/victron-virtual-components-setup.shelly.js
+ */
+
 var components = [
   { id: 220, name: "Battery SOC",      unit: "%",  min: 0,       max: 100,    step: 0.01 },
   { id: 221, name: "Battery Power",    unit: "W",  min: -100000, max: 100000, step: 1    },
