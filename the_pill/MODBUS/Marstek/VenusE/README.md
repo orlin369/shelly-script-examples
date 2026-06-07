@@ -24,9 +24,15 @@ power, AC frequency, internal temperature, and inverter state.
 - [`venus_e_vc.shelly.js`](venus_e_vc.shelly.js): telemetry reader that creates and updates Shelly Virtual Components with label-backed UI ranges
 - [`venus_e_status_vc.shelly.js`](venus_e_status_vc.shelly.js): status-focused Virtual Components reader for SOC, limits, temperatures, daily energy, operating state, and alarm/fault count
 - [`screenshot.png`](screenshot.png): Shelly UI screenshot of the Virtual Components view
-- [`registers.md`](registers.md): cleaned register reference derived from the Marstek CSV
-- [`modbus marstek - address.csv`](modbus%20marstek%20-%20address.csv): original source register map
-- [`modbus marstek - ex_info.csv`](modbus%20marstek%20-%20ex_info.csv): alarm and fault bit definitions
+- [`registers/README.md`](registers/README.md): cross-linked register document index
+- [`registers/runtime_information_04.md`](registers/runtime_information_04.md): read-only runtime/status register map
+- [`registers/parameter_read_write_03_06_10.md`](registers/parameter_read_write_03_06_10.md): read/write parameter register map
+- [`registers/runtime_function_enable.md`](registers/runtime_function_enable.md): `FuncEn` bit definitions
+- [`registers/protection_function_enable.md`](registers/protection_function_enable.md): `ProtectEn` bit definitions
+- [`registers/safety.md`](registers/safety.md): `Safty` enum values
+- [`registers/battery_brand.md`](registers/battery_brand.md): `BatBrand` enum values
+- [`registers/fault_list.md`](registers/fault_list.md): fault-code and fault-bit reference
+- [`registers/protocol_change_log.md`](registers/protocol_change_log.md): source protocol change history
 - [`label.md`](label.md): device identity and missing label details
 - [`TODO.md`](TODO.md): remaining validation and implementation tasks
 
@@ -40,35 +46,33 @@ Open validation items before adding any control/write script:
 - alarm/fault bit behavior during real warning or fault conditions
 - whether the device accepts FC06/FC10 writes safely
 
-## Protocol Source
-Protocol information from the Venus-E 3.0 485 protocol notes:
+## Protocol And Register Reference
+The register documentation lives in the cross-linked [`registers/`](registers/README.md) folder. Start with the index, then follow the document-specific links for runtime registers, writable parameters, bitfields, enum tables, faults, and protocol change history.
 
-| Field | Value |
+| Document | Purpose |
 |---|---|
-| Protocol | Standard Modbus RTU Protocol |
-| Default MODBUS address | `1` |
-| Serial settings | `115200`, 8 data bits, no parity, 1 stop bit |
-| Version | `v1.0` |
-| Date | `2024-07-08` |
-| Change note | first version |
+| [Register documents index](registers/README.md) | Cross-linked index for the exported register reference set. |
+| [Runtime Information 04](registers/runtime_information_04.md) | Read-only runtime/status register map. |
+| [Parameter Read/Write 03-06-10](registers/parameter_read_write_03_06_10.md) | Read/write parameter register map. |
+| [Runtime Function Enable](registers/runtime_function_enable.md) | Bit definitions referenced by `FuncEn`. |
+| [Protection Function Enable](registers/protection_function_enable.md) | Bit definitions referenced by `ProtectEn`. |
+| [Safety](registers/safety.md) | Safety-standard enum values referenced by `Safty`. |
+| [Battery Brand](registers/battery_brand.md) | Battery-brand enum values referenced by `BatBrand`. |
+| [Fault List](registers/fault_list.md) | Fault-code and fault-bit reference. |
+| [Protocol Change Log](registers/protocol_change_log.md) | Version history and source changes. |
 
-## Communication
-Documented defaults in the VenusE scripts:
+Operational summary:
 
 | Parameter | Value |
 |---|---|
+| Protocol | Standard Modbus RTU |
 | Function code | `0x03` Read Holding Registers |
 | Slave ID | `1` |
 | Baud rate | `115200` |
 | Mode | `8N1` |
-| Register address base | direct decimal addresses from the CSV |
+| Register address base | direct decimal holding-register addresses from the CSV |
 
-The device has been verified to respond with these settings on The Pill.
-Both `venus_e.shelly.js` and `venus_e_vc.shelly.js` have been tested on the
-target device and successfully read live MODBUS values.
-`venus_e_status_vc.shelly.js` has also been uploaded to the target device and
-verified to reconfigure the same Virtual Components into the status-focused
-layout.
+The device has been verified to respond with these settings on The Pill. Both Virtual Component layouts and the console reader have been tested on the target device.
 
 ## RS485 Wiring (The Pill 5-Terminal Add-on)
 
@@ -153,10 +157,5 @@ VenusE VC script at a time on The Pill.
 
 ## Notes
 - The scripts intentionally do not write registers.
-- Register `42000` appears to gate RS485 control mode for control registers `42000-42999`; this needs manual validation before any write script is added.
-- Register `32202` says positive AC power means feed-in to the grid.
-- Register `32204` is live-tested with `0.1 Hz` scaling on this device, despite the source CSV showing `0.01 Hz`.
-- 32-bit word order is still open because the initial hardware test had no load and did not produce useful non-zero 32-bit power/energy values.
-- Register `35100` currently maps `0=sleep`, `1=standby`, `2=charge`, `3=discharge`, `4=backup mode`, `5=OTA upgrade`, `6=bypass`.
-- `venus_e.shelly.js` decodes active alarm/fault bit labels from `modbus marstek - ex_info.csv`.
+- Register-level semantics, scale exceptions, alarm/fault bits, and open validation items are centralized in [`registers/`](registers/README.md).
 - The RJ45 RS485 pinout has been confirmed on the device used for this integration.
