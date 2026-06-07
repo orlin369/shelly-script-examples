@@ -355,6 +355,10 @@ power-energy/victron-mppt-solar-controller.shelly.js: Victron's Smartsolar charg
 ===
 This script allows the decryption of Victron's Smartsolar charge controller data and update the virtual components with live solar charger values.
 
+power-energy/victron-virtual-components-setup.shelly.js: Victron Energy virtual Number components provisioning
+===
+One-shot script that creates and configures nine virtual Number components (IDs 220–228) for live Victron telemetry and groups them under "Victron Energy" (group 219). Each component is configured with a progressbar UI hint. Safe to re-run — Virtual.Add skips components that already exist. Calls die() on completion to free memory.
+
 scheduling/objects.shelly.js: mJS example of how to create custom Objects that interact with components (Switch in this case)
 ===
 Example of how to create wrappers around RPC calls and using Object.create.
