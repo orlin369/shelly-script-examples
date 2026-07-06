@@ -1,6 +1,6 @@
 /**
  * @title Sigenergy SigenStor MODBUS-RTU plant monitor
- * @description Reads SigenStor plant PV, battery, grid, load, SOC, and grid-state values into Virtual Components.
+ * @description Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components.
  * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Sigenergy/SigenStor/sigenstor_plant_vc.shelly.js
  */
@@ -33,6 +33,9 @@
  * - number:203   Grid Power, W, positive means export
  * - number:204   Load Power, W
  * - boolean:200  On Grid
+ * - enum:200     Load Status
+ * - enum:201     Battery Status
+ * - enum:202     Operating Mode
  *
  * Protocol notes:
  * - Sigenergy plant data uses MODBUS slave ID 247.
@@ -50,6 +53,8 @@ var CONFIG = {
   slaveId: 247,
   pollMs: 1000,
   heartbeatEvery: 10,
+  pvMaxW: 7575,
+  inverterMaxW: 10000,
 };
 
 var COMPONENT_IDS = {
@@ -60,15 +65,27 @@ var COMPONENT_IDS = {
   gridPower: 203,
   loadPower: 204,
   onGrid: 200,
+  loadStatus: 200,
+  batteryStatus: 201,
+  operatingMode: 202,
 };
 
+var ICON_COLOR = '%2323D3B4';
+
+function iconUrl(name) {
+  return 'https://api.iconify.design/solar:' + name + '-bold-duotone.svg?color=' + ICON_COLOR;
+}
+
 var ICONS = {
-  pvPower: 'https://api.iconify.design/solar:sun-2-bold-duotone.svg?color=%2323D3B4',
-  batterySoc: 'https://api.iconify.design/solar:battery-full-bold-duotone.svg?color=%2323D3B4',
-  batteryPower: 'https://api.iconify.design/solar:battery-charge-bold-duotone.svg?color=%2323D3B4',
-  gridPower: 'https://api.iconify.design/solar:bolt-bold-duotone.svg?color=%2323D3B4',
-  loadPower: 'https://api.iconify.design/solar:home-2-bold-duotone.svg?color=%2323D3B4',
-  onGrid: 'https://api.iconify.design/solar:plug-circle-bold-duotone.svg?color=%2323D3B4',
+  pvPower: iconUrl('sun-2'),
+  batterySoc: iconUrl('battery-full'),
+  batteryPower: iconUrl('battery-charge'),
+  gridPower: iconUrl('bolt'),
+  loadPower: iconUrl('home-2'),
+  onGrid: iconUrl('plug-circle'),
+  loadStatus: iconUrl('chart-2'),
+  batteryStatus: iconUrl('battery-charge'),
+  operatingMode: iconUrl('settings'),
 };
 
 var COMPONENTS = [
@@ -80,8 +97,9 @@ var COMPONENTS = [
     unit: 'W',
     icon: ICONS.pvPower,
     min: 0,
-    max: 50000,
+    max: CONFIG.pvMaxW,
     step: 1,
+    view: 'progressbar',
     vcHandle: null,
   },
   {
@@ -94,6 +112,7 @@ var COMPONENTS = [
     min: 0,
     max: 100,
     step: 0.1,
+    view: 'progressbar',
     vcHandle: null,
   },
   {
@@ -106,6 +125,7 @@ var COMPONENTS = [
     min: -50000,
     max: 50000,
     step: 1,
+    view: 'label',
     vcHandle: null,
   },
   {
@@ -118,6 +138,7 @@ var COMPONENTS = [
     min: -50000,
     max: 50000,
     step: 1,
+    view: 'label',
     vcHandle: null,
   },
   {
@@ -128,8 +149,9 @@ var COMPONENTS = [
     unit: 'W',
     icon: ICONS.loadPower,
     min: 0,
-    max: 50000,
+    max: CONFIG.inverterMaxW,
     step: 1,
+    view: 'progressbar',
     vcHandle: null,
   },
   {
@@ -140,7 +162,43 @@ var COMPONENTS = [
     icon: ICONS.onGrid,
     vcHandle: null,
   },
+  {
+    type: 'enum',
+    id: COMPONENT_IDS.loadStatus,
+    key: 'enum:' + COMPONENT_IDS.loadStatus,
+    name: 'Load Status',
+    options: ['Low', 'Medium', 'High', 'Peak'],
+    icon: ICONS.loadStatus,
+    vcHandle: null,
+  },
+  {
+    type: 'enum',
+    id: COMPONENT_IDS.batteryStatus,
+    key: 'enum:' + COMPONENT_IDS.batteryStatus,
+    name: 'Battery Status',
+    options: ['Charging', 'Idle', 'Discharging'],
+    icon: ICONS.batteryStatus,
+    vcHandle: null,
+  },
+  {
+    type: 'enum',
+    id: COMPONENT_IDS.operatingMode,
+    key: 'enum:' + COMPONENT_IDS.operatingMode,
+    name: 'Operating Mode',
+    options: ['Self-Consumption', 'AI', 'TOU', 'Feed-in', 'Remote EMS', 'Custom', 'Unknown'],
+    icon: ICONS.operatingMode,
+    vcHandle: null,
+  },
 ];
+
+var EMS_MODES = {
+  0: 'Self-Consumption',
+  1: 'AI',
+  2: 'TOU',
+  5: 'Feed-in',
+  7: 'Remote EMS',
+  9: 'Custom',
+};
 
 // ============================================================================
 // STATE
@@ -170,23 +228,60 @@ function round1(value) {
   return Math.round(value * 10) / 10;
 }
 
+function loadStatus(loadW) {
+  var rated = CONFIG.inverterMaxW;
+  if (loadW >= rated) return 'Peak';
+  if (loadW >= 0.7 * rated) return 'High';
+  if (loadW >= 0.3 * rated) return 'Medium';
+  return 'Low';
+}
+
+function batteryStatus(watts) {
+  if (watts > 50) return 'Charging';
+  if (watts < -50) return 'Discharging';
+  return 'Idle';
+}
+
+function operatingMode(raw) {
+  return EMS_MODES[raw] || 'Unknown';
+}
+
 function componentConfig(component) {
+  var ui = {
+    icon: component.icon,
+  };
+
   if (component.type === 'boolean') {
+    ui.titles = {
+      'false': 'off-grid',
+      'true': 'on-grid',
+    };
+
     return {
       name: component.name,
       default_value: false,
       meta: {
-        ui: {
-          icon: component.icon,
-          titles: {
-            'false': 'off-grid',
-            'true': 'on-grid',
-          },
-        },
+        ui: ui,
         persist: false,
       },
     };
   }
+
+  if (component.type === 'enum') {
+    return {
+      name: component.name,
+      options: component.options,
+      default_value: component.options[0],
+      meta: {
+        ui: ui,
+        persist: false,
+      },
+    };
+  }
+
+  ui.view = component.view;
+  ui.unit = component.unit;
+  ui.step = component.step;
 
   return {
     name: component.name,
@@ -194,12 +289,7 @@ function componentConfig(component) {
     min: component.min,
     max: component.max,
     meta: {
-      ui: {
-        view: 'progressbar',
-        unit: component.unit,
-        icon: component.icon,
-        step: component.step,
-      },
+      ui: ui,
       persist: false,
     },
   };
@@ -235,6 +325,11 @@ function setNumber(id, value) {
 
 function setBoolean(id, value) {
   var component = findComponent('boolean:' + id);
+  if (component) setComponent(component, value);
+}
+
+function setEnum(id, value) {
+  var component = findComponent('enum:' + id);
   if (component) setComponent(component, value);
 }
 
@@ -359,7 +454,8 @@ function poll() {
   if (state.pollActive) return;
   state.pollActive = true;
 
-  readInputRegisters(30005, 10, function(a, errA, msgA) {
+  readInputRegisters(30003, 12, function(a, errA, msgA) {
+    var emsMode;
     var grid;
     var onGridRaw;
     var soc;
@@ -371,9 +467,10 @@ function poll() {
       return;
     }
 
-    grid = s32(a[0], a[1]);
-    onGridRaw = a[4];
-    soc = round1(a[9] / 10);
+    emsMode = a[0];
+    grid = s32(a[2], a[3]);
+    onGridRaw = a[6];
+    soc = round1(a[11] / 10);
 
     readInputRegisters(30035, 4, function(b, errB, msgB) {
       var pv;
@@ -402,6 +499,9 @@ function poll() {
       setNumber(COMPONENT_IDS.gridPower, gridExport);
       setNumber(COMPONENT_IDS.loadPower, load);
       setBoolean(COMPONENT_IDS.onGrid, onGrid);
+      setEnum(COMPONENT_IDS.loadStatus, loadStatus(load));
+      setEnum(COMPONENT_IDS.batteryStatus, batteryStatus(battery));
+      setEnum(COMPONENT_IDS.operatingMode, operatingMode(emsMode));
 
       state.tick++;
       if (state.tick % CONFIG.heartbeatEvery === 0) {
@@ -416,7 +516,11 @@ function poll() {
             gridExport +
             'W Load=' +
             load +
-            'W OnGrid=' +
+            'W(' +
+            loadStatus(load) +
+            ') Mode=' +
+            operatingMode(emsMode) +
+            ' OnGrid=' +
             onGrid
         );
       }
@@ -432,7 +536,7 @@ function poll() {
 // ============================================================================
 
 function init() {
-  log('Sigenergy SigenStor MODBUS monitor');
+  log('Sigenergy SigenStor MODBUS monitor enhanced');
   log('Serial=' + CONFIG.serialId + ' Slave=' + CONFIG.slaveId + ' Poll=' + CONFIG.pollMs + 'ms');
 
   setupComponents(function() {

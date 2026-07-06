@@ -256,7 +256,7 @@ This script demonstrates how to send unencrypted LoRa messages using Shelly scri
 
 modbus/Sigenergy/SigenStor/sigenstor_plant_vc.shelly.js: Sigenergy SigenStor MODBUS-RTU plant monitor
 ===
-Reads SigenStor plant PV, battery, grid, load, SOC, and grid-state values into Virtual Components.
+Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components.
 
 mqtt/control-ha-light-entity-with-boolean.shelly.js: Control Light entity from HA via virtual boolean component
 ===

@@ -311,7 +311,7 @@
   {
     "fname": "modbus/Sigenergy/SigenStor/sigenstor_plant_vc.shelly.js",
     "title": "Sigenergy SigenStor MODBUS-RTU plant monitor",
-    "description": "Reads SigenStor plant PV, battery, grid, load, SOC, and grid-state values into Virtual Components."
+    "description": "Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components."
   },
   {
     "fname": "mqtt/control-ha-light-entity-with-boolean.shelly.js",
