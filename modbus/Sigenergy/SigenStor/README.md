@@ -58,6 +58,15 @@ The script creates and updates:
 | `number:203` | Grid Power | W, positive means export | `solar:bolt-bold-duotone` |
 | `number:204` | Load Power | W | `solar:home-2-bold-duotone` |
 | `boolean:200` | On Grid | `true` when on-grid | `solar:plug-circle-bold-duotone` |
+| `enum:200` | Load Status | `Low`, `Medium`, `High`, or `Peak` vs rated inverter power | `solar:chart-2-bold-duotone` |
+| `enum:201` | Battery Status | `Charging`, `Idle`, or `Discharging` | `solar:battery-charge-bold-duotone` |
+| `enum:202` | Operating Mode | EMS work mode label | `solar:settings-bold-duotone` |
+
+The default progress-bar limits are configured in the script:
+
+- `CONFIG.pvMaxW`: PV array maximum for the PV Power progress bar.
+- `CONFIG.inverterMaxW`: inverter rated power for the Load Power progress bar
+  and Load Status thresholds.
 
 ## Register Notes
 
@@ -66,10 +75,11 @@ Based on Sigenergy MODBUS Protocol V2.7:
 - Slave ID: `247`
 - Function: `FC04` read input registers
 - PDU addresses use the full register number
-- Block A: `30005`, quantity `10`
-  - Grid power: `S32` at words `0..1`
-  - On/off-grid state: word `4`, `0` means on-grid
-  - SOC: word `9`, scale `0.1 %`
+- Block A: `30003`, quantity `12`
+  - EMS operating mode: word `0`
+  - Grid power: `S32` at words `2..3`
+  - On/off-grid state: word `6`, `0` means on-grid
+  - SOC: word `11`, scale `0.1 %`
 - Block B: `30035`, quantity `4`
   - PV power: `S32` at words `0..1`
   - ESS/battery power: `S32` at words `2..3`, positive means charging

@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-07
+- Enhance the Sigenergy SigenStor MODBUS monitor with load, battery, and operating-mode status Virtual Components
 - Add Iconify UI icons to the Sigenergy SigenStor Virtual Components
 - Add Sigenergy SigenStor MODBUS-RTU plant monitor for Shelly Pro RS485 Addon with Virtual Component setup
 
