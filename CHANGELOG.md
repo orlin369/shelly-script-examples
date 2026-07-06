@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-07
+- Add Iconify UI icons to the Sigenergy SigenStor Virtual Components
 - Add Sigenergy SigenStor MODBUS-RTU plant monitor for Shelly Pro RS485 Addon with Virtual Component setup
 
 ## 2026-05

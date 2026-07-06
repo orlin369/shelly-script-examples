@@ -49,15 +49,15 @@ reversed. Swap A/B and test again.
 
 The script creates and updates:
 
-| Component | Name | Unit / Meaning |
-| --- | --- | --- |
-| `group:200` | Sigenergy SigenStor | Group containing all VCs |
-| `number:200` | PV Power | W |
-| `number:201` | Battery SOC | % |
-| `number:202` | Battery Power | W, positive means charging |
-| `number:203` | Grid Power | W, positive means export |
-| `number:204` | Load Power | W |
-| `boolean:200` | On Grid | `true` when on-grid |
+| Component | Name | Unit / Meaning | Iconify icon |
+| --- | --- | --- | --- |
+| `group:200` | Sigenergy SigenStor | Group containing all VCs | - |
+| `number:200` | PV Power | W | `solar:sun-2-bold-duotone` |
+| `number:201` | Battery SOC | % | `solar:battery-full-bold-duotone` |
+| `number:202` | Battery Power | W, positive means charging | `solar:battery-charge-bold-duotone` |
+| `number:203` | Grid Power | W, positive means export | `solar:bolt-bold-duotone` |
+| `number:204` | Load Power | W | `solar:home-2-bold-duotone` |
+| `boolean:200` | On Grid | `true` when on-grid | `solar:plug-circle-bold-duotone` |
 
 ## Register Notes
 

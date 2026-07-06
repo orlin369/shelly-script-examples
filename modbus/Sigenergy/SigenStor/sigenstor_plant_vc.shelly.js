@@ -62,6 +62,15 @@ var COMPONENT_IDS = {
   onGrid: 200,
 };
 
+var ICONS = {
+  pvPower: 'https://api.iconify.design/solar:sun-2-bold-duotone.svg?color=%2323D3B4',
+  batterySoc: 'https://api.iconify.design/solar:battery-full-bold-duotone.svg?color=%2323D3B4',
+  batteryPower: 'https://api.iconify.design/solar:battery-charge-bold-duotone.svg?color=%2323D3B4',
+  gridPower: 'https://api.iconify.design/solar:bolt-bold-duotone.svg?color=%2323D3B4',
+  loadPower: 'https://api.iconify.design/solar:home-2-bold-duotone.svg?color=%2323D3B4',
+  onGrid: 'https://api.iconify.design/solar:plug-circle-bold-duotone.svg?color=%2323D3B4',
+};
+
 var COMPONENTS = [
   {
     type: 'number',
@@ -69,6 +78,7 @@ var COMPONENTS = [
     key: 'number:' + COMPONENT_IDS.pvPower,
     name: 'PV Power',
     unit: 'W',
+    icon: ICONS.pvPower,
     min: 0,
     max: 50000,
     step: 1,
@@ -80,6 +90,7 @@ var COMPONENTS = [
     key: 'number:' + COMPONENT_IDS.batterySoc,
     name: 'Battery SOC',
     unit: '%',
+    icon: ICONS.batterySoc,
     min: 0,
     max: 100,
     step: 0.1,
@@ -91,6 +102,7 @@ var COMPONENTS = [
     key: 'number:' + COMPONENT_IDS.batteryPower,
     name: 'Battery Power',
     unit: 'W',
+    icon: ICONS.batteryPower,
     min: -50000,
     max: 50000,
     step: 1,
@@ -102,6 +114,7 @@ var COMPONENTS = [
     key: 'number:' + COMPONENT_IDS.gridPower,
     name: 'Grid Power',
     unit: 'W',
+    icon: ICONS.gridPower,
     min: -50000,
     max: 50000,
     step: 1,
@@ -113,6 +126,7 @@ var COMPONENTS = [
     key: 'number:' + COMPONENT_IDS.loadPower,
     name: 'Load Power',
     unit: 'W',
+    icon: ICONS.loadPower,
     min: 0,
     max: 50000,
     step: 1,
@@ -123,6 +137,7 @@ var COMPONENTS = [
     id: COMPONENT_IDS.onGrid,
     key: 'boolean:' + COMPONENT_IDS.onGrid,
     name: 'On Grid',
+    icon: ICONS.onGrid,
     vcHandle: null,
   },
 ];
@@ -162,6 +177,7 @@ function componentConfig(component) {
       default_value: false,
       meta: {
         ui: {
+          icon: component.icon,
           titles: {
             'false': 'off-grid',
             'true': 'on-grid',
@@ -181,6 +197,7 @@ function componentConfig(component) {
       ui: {
         view: 'progressbar',
         unit: component.unit,
+        icon: component.icon,
         step: component.step,
       },
       persist: false,
