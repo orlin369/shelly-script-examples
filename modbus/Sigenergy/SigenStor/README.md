@@ -69,6 +69,8 @@ The default progress-bar limits are configured in the script:
 - `CONFIG.inverterMaxW`: inverter rated power for the Load Power progress bar
   and Load Status thresholds (`10000 W` by default).
 
+Set both values for the actual installation before using the script.
+
 The script also applies Shelly Cloud metadata:
 
 - Number Virtual Components use `meta.cloud: ['measurement']`.
