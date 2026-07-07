@@ -1,6 +1,6 @@
 /**
  * @title Sigenergy SigenStor MODBUS-RTU plant monitor
- * @description Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components.
+ * @description Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components with cloud logging.
  * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Sigenergy/SigenStor/sigenstor_plant_vc.shelly.js
  */
@@ -25,17 +25,25 @@
  * - Sigenergy MODBUS enabled by installer
  * - Sigenergy RS485-1 configured as MODBUS-RTU slave, 9600 8N1
  *
- * Virtual Components created:
+ * Before use, set CONFIG.pvMaxW and CONFIG.inverterMaxW for the installation.
+ *
+ * Virtual Components created in display order:
  * - group:200    Sigenergy SigenStor
  * - number:200   PV Power, W
+ * - enum:201     Battery Status
  * - number:201   Battery SOC, %
  * - number:202   Battery Power, W, positive means charging
- * - number:203   Grid Power, W, positive means export
- * - number:204   Load Power, W
  * - boolean:200  On Grid
+ * - number:203   Grid Power, W, positive means export
  * - enum:200     Load Status
- * - enum:201     Battery Status
+ * - number:204   Load Power, W
  * - enum:202     Operating Mode
+ *
+ * Cloud metadata:
+ * - Number components use `meta.cloud: ['measurement']` for statistics.
+ * - Boolean and enum components use `meta.cloud: ['log']` for state-change
+ *   history.
+ * - Enum components use `meta.ui.titles` so the Shelly app displays labels.
  *
  * Protocol notes:
  * - Sigenergy plant data uses MODBUS slave ID 247.
@@ -53,8 +61,8 @@ var CONFIG = {
   slaveId: 247,
   pollMs: 1000,
   heartbeatEvery: 10,
-  pvMaxW: 7575,
-  inverterMaxW: 10000,
+  pvMaxW: 10000, // Set this: PV array maximum power in W.
+  inverterMaxW: 10000, // Set this: inverter rated power in W.
 };
 
 var COMPONENT_IDS = {
@@ -100,6 +108,16 @@ var COMPONENTS = [
     max: CONFIG.pvMaxW,
     step: 1,
     view: 'progressbar',
+    stat: 'measurement',
+    vcHandle: null,
+  },
+  {
+    type: 'enum',
+    id: COMPONENT_IDS.batteryStatus,
+    key: 'enum:' + COMPONENT_IDS.batteryStatus,
+    name: 'Battery Status',
+    options: ['Charging', 'Idle', 'Discharging'],
+    icon: ICONS.batteryStatus,
     vcHandle: null,
   },
   {
@@ -113,6 +131,7 @@ var COMPONENTS = [
     max: 100,
     step: 0.1,
     view: 'progressbar',
+    stat: 'measurement',
     vcHandle: null,
   },
   {
@@ -126,6 +145,15 @@ var COMPONENTS = [
     max: 50000,
     step: 1,
     view: 'label',
+    stat: 'measurement',
+    vcHandle: null,
+  },
+  {
+    type: 'boolean',
+    id: COMPONENT_IDS.onGrid,
+    key: 'boolean:' + COMPONENT_IDS.onGrid,
+    name: 'On Grid',
+    icon: ICONS.onGrid,
     vcHandle: null,
   },
   {
@@ -139,6 +167,16 @@ var COMPONENTS = [
     max: 50000,
     step: 1,
     view: 'label',
+    stat: 'measurement',
+    vcHandle: null,
+  },
+  {
+    type: 'enum',
+    id: COMPONENT_IDS.loadStatus,
+    key: 'enum:' + COMPONENT_IDS.loadStatus,
+    name: 'Load Status',
+    options: ['Low', 'Medium', 'High', 'Peak'],
+    icon: ICONS.loadStatus,
     vcHandle: null,
   },
   {
@@ -152,32 +190,7 @@ var COMPONENTS = [
     max: CONFIG.inverterMaxW,
     step: 1,
     view: 'progressbar',
-    vcHandle: null,
-  },
-  {
-    type: 'boolean',
-    id: COMPONENT_IDS.onGrid,
-    key: 'boolean:' + COMPONENT_IDS.onGrid,
-    name: 'On Grid',
-    icon: ICONS.onGrid,
-    vcHandle: null,
-  },
-  {
-    type: 'enum',
-    id: COMPONENT_IDS.loadStatus,
-    key: 'enum:' + COMPONENT_IDS.loadStatus,
-    name: 'Load Status',
-    options: ['Low', 'Medium', 'High', 'Peak'],
-    icon: ICONS.loadStatus,
-    vcHandle: null,
-  },
-  {
-    type: 'enum',
-    id: COMPONENT_IDS.batteryStatus,
-    key: 'enum:' + COMPONENT_IDS.batteryStatus,
-    name: 'Battery Status',
-    options: ['Charging', 'Idle', 'Discharging'],
-    icon: ICONS.batteryStatus,
+    stat: 'measurement',
     vcHandle: null,
   },
   {
@@ -246,12 +259,26 @@ function operatingMode(raw) {
   return EMS_MODES[raw] || 'Unknown';
 }
 
+// Enum options are stored as keys. Map each key to itself so the Shelly app
+// renders a visible label for every enum value.
+function optionTitles(options) {
+  var titles = {};
+  var i;
+
+  for (i = 0; i < options.length; i++) {
+    titles[options[i]] = options[i];
+  }
+
+  return titles;
+}
+
 function componentConfig(component) {
   var ui = {
     icon: component.icon,
   };
 
   if (component.type === 'boolean') {
+    ui.view = 'label';
     ui.titles = {
       'false': 'off-grid',
       'true': 'on-grid',
@@ -262,19 +289,21 @@ function componentConfig(component) {
       default_value: false,
       meta: {
         ui: ui,
-        persist: false,
+        cloud: ['log'],
       },
     };
   }
 
   if (component.type === 'enum') {
+    ui.view = 'label';
+    ui.titles = optionTitles(component.options);
     return {
       name: component.name,
       options: component.options,
       default_value: component.options[0],
       meta: {
         ui: ui,
-        persist: false,
+        cloud: ['log'],
       },
     };
   }
@@ -290,7 +319,7 @@ function componentConfig(component) {
     max: component.max,
     meta: {
       ui: ui,
-      persist: false,
+      cloud: [component.stat],
     },
   };
 }

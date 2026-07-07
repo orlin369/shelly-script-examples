@@ -53,20 +53,30 @@ The script creates and updates:
 | --- | --- | --- | --- |
 | `group:200` | Sigenergy SigenStor | Group containing all VCs | - |
 | `number:200` | PV Power | W | `solar:sun-2-bold-duotone` |
+| `enum:201` | Battery Status | `Charging`, `Idle`, or `Discharging` | `solar:battery-charge-bold-duotone` |
 | `number:201` | Battery SOC | % | `solar:battery-full-bold-duotone` |
 | `number:202` | Battery Power | W, positive means charging | `solar:battery-charge-bold-duotone` |
-| `number:203` | Grid Power | W, positive means export | `solar:bolt-bold-duotone` |
-| `number:204` | Load Power | W | `solar:home-2-bold-duotone` |
 | `boolean:200` | On Grid | `true` when on-grid | `solar:plug-circle-bold-duotone` |
+| `number:203` | Grid Power | W, positive means export | `solar:bolt-bold-duotone` |
 | `enum:200` | Load Status | `Low`, `Medium`, `High`, or `Peak` vs rated inverter power | `solar:chart-2-bold-duotone` |
-| `enum:201` | Battery Status | `Charging`, `Idle`, or `Discharging` | `solar:battery-charge-bold-duotone` |
+| `number:204` | Load Power | W | `solar:home-2-bold-duotone` |
 | `enum:202` | Operating Mode | EMS work mode label | `solar:settings-bold-duotone` |
 
 The default progress-bar limits are configured in the script:
 
-- `CONFIG.pvMaxW`: PV array maximum for the PV Power progress bar.
+- `CONFIG.pvMaxW`: PV array maximum for the PV Power progress bar
+  (`10000 W` by default).
 - `CONFIG.inverterMaxW`: inverter rated power for the Load Power progress bar
-  and Load Status thresholds.
+  and Load Status thresholds (`10000 W` by default).
+
+Set both values for the actual installation before using the script.
+
+The script also applies Shelly Cloud metadata:
+
+- Number Virtual Components use `meta.cloud: ['measurement']`.
+- Boolean and enum Virtual Components use `meta.cloud: ['log']`.
+- Enum Virtual Components also set `meta.ui.titles` so each option is shown
+  with its display label in the Shelly app.
 
 ## Register Notes
 
