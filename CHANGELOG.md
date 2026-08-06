@@ -7,6 +7,13 @@ All notable changes to this project will be documented in this file.
 - Restore standard JSDoc headers (`@title`/`@description`/`@status`/`@link`) on 66 existing `modbus/` scripts that had lost them
 - Fix a stale `@link` pointing at `the_pill/MODBUS/...` on the MarsRock G2 SUN Series reader
 - Document the new per-device `*_vc.shelly.js` pattern in `modbus/README.md`
+- Make every remaining single-purpose `modbus/` script self-deploy its own Virtual Component(s) for whatever it reads, instead of assuming components already exist:
+  - Rewire 33 `ENTITIES`-array scripts across CyberPower CP1600EPFCLCD, Deye SG01HP3/SG02LP1/SG03LP1/SG04LP3, and Growatt MIC_2500TL-X/MIN_4200TL-XE/SFP5000/SPH_10000TL3_BH-UP to build a number-type Virtual Component (+ group) for every register they read via `ensureVirtualComponents`
+  - Rebuild the 5 raw Huawei SUN-2000 register-table fragments (`get_grid`, `get_pv`, `get_energy`, `device_state`, `get_inverter_status`) into complete, standalone, self-deploying scripts with a MODBUS endpoint, polling loop, and Virtual Components dashboard (previously just bare arrays with no runnable scaffolding)
+  - Add per-channel self-deploying Virtual Components to the 5 ComWinTop CWT-MB308V single-channel examples (`example_discrete_inputs`, `example_input_register`, `example_write_holding_register`, `example_discrete_outputs`, `example_pot_anim`), fixing two of them that assumed a pre-existing `number:200` component
+  - Fix 7 Deye/Growatt `application_examples` scripts (`display_virtual_components` x2, `display_virtual_components_ui_async`, `external_display`, `shekran/shekran`, `vc_modes_deye`, `vc_modes_growatt`) that previously called `Virtual.getHandle` on components assumed to already exist; the two `vc_modes_*` scripts now self-deploy `enum`-type Virtual Components for their mode selectors
+  - Leave `print_parameters.shelly.js`, `example_cli.shelly.js`, and `diagnostic_register_scan.shelly.js` intentionally Virtual-Component-free: their stated purpose is a console-only readout or a one-shot register scan with no fixed named parameters, matching the existing `entire_modbus_table.shelly.js`/`all_registes.shelly.js` exception
+  - Leave `get_battery.shelly.js` (Huawei), `get_regs.shelly.js`, `get_env.shelly.js`, and `get_inverter_settings.shelly.js` untouched: the first duplicates the other 5 Huawei fragments combined (treated like an entire-table reference), the other three still contain `TODO` placeholder register addresses that cannot be legitimately turned into working Virtual Components without fabricating hardware data
 
 ## 2026-02
 - Update `modbus/Deye/SG02LP1/application_examples/shekran/README.md` to reflect script functionality
