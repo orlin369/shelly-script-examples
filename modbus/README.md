@@ -28,18 +28,30 @@ simpler starting points.
 - [`ComWinTop/MB308V/`](ComWinTop/MB308V/): generic 8-AI/4-AO/8-DI/12-DO IO
   expansion module - `mb308v_vc.shelly.js`
 - [`CyberPower/CP1600EPFCLCD/`](CyberPower/CP1600EPFCLCD/): UPS - `cp1600epfclcd_vc.shelly.js`
+- [`Davis/Pyranometer/`](Davis/Pyranometer/): RS-485 solar irradiance sensor - `pyranometer_vc.shelly.js`
 - [`Deye/SG01HP3/`](Deye/SG01HP3/): hybrid inverter, dual battery + generator + UPS load - `sg01hp3_vc.shelly.js`
 - [`Deye/SG02LP1/`](Deye/SG02LP1/): hybrid inverter with battery - `sg02lp1_vc.shelly.js`
 - [`Deye/SG03LP1/`](Deye/SG03LP1/): grid-tie inverter, no battery - `sg03lp1_vc.shelly.js`
 - [`Deye/SG04LP3/`](Deye/SG04LP3/): grid-tie inverter, no battery - `sg04lp3_vc.shelly.js`
+- [`DFRobot/SEN0492/`](DFRobot/SEN0492/): RS-485 laser ranging sensor - `sen0492_vc.shelly.js`
+- [`GACIA/AICB2SP/`](GACIA/AICB2SP/): smart IoT circuit breaker (metering + remote switch) - `aicb2sp_vc.shelly.js`
 - [`Growatt/MIC_2500TL-X/`](Growatt/MIC_2500TL-X/): grid-tie inverter with battery block - `mic_2500tl_x_vc.shelly.js`
 - [`Growatt/MIN_4200TL-XE/`](Growatt/MIN_4200TL-XE/): grid-tie inverter with battery block - `min_4200tl_xe_vc.shelly.js`
 - [`Growatt/SFP5000/`](Growatt/SFP5000/): off-grid/hybrid inverter - `sfp5000_vc.shelly.js`
 - [`Growatt/SPH_10000TL3_BH-UP/`](Growatt/SPH_10000TL3_BH-UP/): grid-tie inverter with battery block - `sph_10000tl3_bh_up_vc.shelly.js`
 - [`Huawei/SUN-2000/`](Huawei/SUN-2000/): grid-tie inverter - `sun2000_vc.shelly.js`
 - [`IGEN/DTSD422/`](IGEN/DTSD422/): six-circuit energy meter (CT1-CT4 documented) - `dtsd422_vc.shelly.js`
+- [`JKESS/JK200-MBS/`](JKESS/JK200-MBS/): Jikong JK-PB series BMS (cell voltages + pack telemetry) - `jk200_vc.shelly.js`
+- [`LinkedGo/R290/`](LinkedGo/R290/): R290 air-to-water thermal pump - `r290_aw_thermal_pump_vc.shelly.js`
+- [`LinkedGo/ST802/`](LinkedGo/ST802/): Youth Smart Thermostat + BMS command simulation - `st802_bms_vc.shelly.js`
 - [`MarsRock/G2_SUN_Series_Grid_Tie_Inverter/`](MarsRock/G2_SUN_Series_Grid_Tie_Inverter/): micro-inverter, only 5 registers total (all promoted to VC) - `g2_sun_series_vc.shelly.js`
+- [`Marstek/VenusE/`](Marstek/VenusE/): battery/inverter, plus a dedicated charge/discharge control script - `venus_e_vc.shelly.js`, `venus_e_control_vc.shelly.js`
 - [`Sigenergy/`](Sigenergy/): Sigenergy/SigenStor MODBUS examples for Shelly Pro RS485 Addon
+- [`V-TAC/VT6607103/`](V-TAC/VT6607103/): hybrid inverter, six inferred live registers - `vtac_six_register_example_vc.shelly.js`
+- [`wirenboard/WB-M1W2-v3/`](wirenboard/WB-M1W2-v3/): 1-Wire to RS-485 converter (DS18B20 + discrete inputs) - `wb_m1w2_v3_vc.shelly.js`
+- [`wirenboard/WB-MIR-v-3/`](wirenboard/WB-MIR-v-3/): IR transceiver + environment sensor - `wb_mir_v3_vc.shelly.js`
+- [`utils/`](utils/): vendor-agnostic MODBUS-RTU discovery tools (`modbus_scan.shelly.js`, `modbus_register_scan.shelly.js`)
+- [`http-bridge/`](http-bridge/): HTTP endpoint that bridges arbitrary MODBUS register reads/writes to JSON (`modbus_http_bridge.shelly.js`)
 
 ## What is Modbus?
 
