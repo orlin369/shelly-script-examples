@@ -1,6 +1,6 @@
 /**
  * @title Example Cli
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example demonstrating a console/CLI-style readout instead of Virtual Components.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Growatt/application_examples/example_cli.shelly.js
  */
