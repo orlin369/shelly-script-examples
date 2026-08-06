@@ -1,6 +1,19 @@
-# Modbus RTU with Shelly Devices
+# MODBUS Examples
 
-This guide introduces Modbus RTU and how to use it with Shelly devices.
+MODBUS examples for Shelly devices using built-in MODBUS clients or RS485 add-ons.
+
+## Problem (The Story)
+
+Many inverters, batteries, meters, and plant controllers expose useful local
+telemetry over MODBUS. These examples turn that device data into Shelly logs,
+Virtual Components, or automation-ready values without relying on vendor cloud
+services.
+
+## Persona
+
+- Installer integrating local energy telemetry into a Shelly-based system
+- Advanced user replacing cloud-only monitoring with local MODBUS reads
+- Engineer validating register maps and automation logic on real devices
 
 ## Structure
 
@@ -26,6 +39,7 @@ simpler starting points.
 - [`Huawei/SUN-2000/`](Huawei/SUN-2000/): grid-tie inverter - `sun2000_vc.shelly.js`
 - [`IGEN/DTSD422/`](IGEN/DTSD422/): six-circuit energy meter (CT1-CT4 documented) - `dtsd422_vc.shelly.js`
 - [`MarsRock/G2_SUN_Series_Grid_Tie_Inverter/`](MarsRock/G2_SUN_Series_Grid_Tie_Inverter/): micro-inverter, only 5 registers total (all promoted to VC) - `g2_sun_series_vc.shelly.js`
+- [`Sigenergy/`](Sigenergy/): Sigenergy/SigenStor MODBUS examples for Shelly Pro RS485 Addon
 
 ## What is Modbus?
 
