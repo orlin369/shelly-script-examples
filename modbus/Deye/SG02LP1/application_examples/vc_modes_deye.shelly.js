@@ -1,6 +1,6 @@
 /**
  * @title Vc Modes Deye
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example demonstrating alternate Virtual Component display modes for Deye inverters.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Deye/SG02LP1/application_examples/vc_modes_deye.shelly.js
  */

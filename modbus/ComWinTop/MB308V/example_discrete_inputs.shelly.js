@@ -1,6 +1,6 @@
 /**
  * @title Example Discrete Inputs
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Minimal single-channel MODBUS discrete input read example for the ComWinTop CWT-MB308V.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/ComWinTop/MB308V/example_discrete_inputs.shelly.js
  */

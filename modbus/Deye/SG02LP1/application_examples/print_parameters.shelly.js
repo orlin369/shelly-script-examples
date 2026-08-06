@@ -1,6 +1,6 @@
 /**
  * @title Print Parameters
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example printing all parameters to the console without Virtual Components.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Deye/SG02LP1/application_examples/print_parameters.shelly.js
  */

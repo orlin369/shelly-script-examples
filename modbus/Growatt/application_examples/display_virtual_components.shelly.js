@@ -1,6 +1,6 @@
 /**
  * @title Display Virtual Components
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example demonstrating a Virtual Components dashboard built from the device's ENTITIES table.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Growatt/application_examples/display_virtual_components.shelly.js
  */

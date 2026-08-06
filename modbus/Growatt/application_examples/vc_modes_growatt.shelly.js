@@ -1,6 +1,6 @@
 /**
  * @title Vc Modes Growatt
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example demonstrating alternate Virtual Component display modes for Growatt inverters.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Growatt/application_examples/vc_modes_growatt.shelly.js
  */

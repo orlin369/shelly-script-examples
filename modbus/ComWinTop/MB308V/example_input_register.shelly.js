@@ -1,6 +1,6 @@
 /**
  * @title Example Input Register
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Minimal single-channel MODBUS input register read example for the ComWinTop CWT-MB308V.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/ComWinTop/MB308V/example_input_register.shelly.js
  */

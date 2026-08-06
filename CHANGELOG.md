@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08
+- Add a self-deploying `*_vc.shelly.js` companion script to every device folder under `modbus/` (Deye SG01HP3/SG02LP1/SG03LP1/SG04LP3, Growatt MIC_2500TL-X/MIN_4200TL-XE/SFP5000/SPH_10000TL3_BH-UP, Huawei SUN-2000, IGEN DTSD422, MarsRock G2 SUN Series, ComWinTop CWT-MB308V, CyberPower CP1600EPFCLCD): reads the full documented register set every poll (printed to console) and self-deploys the 9 most valuable parameters as a grouped Virtual Components dashboard via the standard `ensureVirtualComponents` helper, replacing the previous `Virtual.getHandle`-only assumption that components already existed
+- Restore standard JSDoc headers (`@title`/`@description`/`@status`/`@link`) on 66 existing `modbus/` scripts that had lost them
+- Fix a stale `@link` pointing at `the_pill/MODBUS/...` on the MarsRock G2 SUN Series reader
+- Document the new per-device `*_vc.shelly.js` pattern in `modbus/README.md`
+
 ## 2026-02
 - Update `modbus/Deye/SG02LP1/application_examples/shekran/README.md` to reflect script functionality
 - Add new `modbus/` example collection and standardize JSDoc headers across the new `.shelly.js` files

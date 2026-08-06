@@ -1,6 +1,6 @@
 /**
  * @title Display Virtual Components Ui Async
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example demonstrating an asynchronous Virtual Components UI update pattern.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Deye/SG02LP1/application_examples/display_virtual_components_ui_async.shelly.js
  */

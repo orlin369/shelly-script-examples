@@ -1,6 +1,6 @@
 /**
  * @title Entire Modbus Table
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Full register table reference for this device, printed to the console on a timer. Not the recommended entry point - use the paired _vc.shelly.js script for a self-deploying dashboard.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/IGEN/DTSD422/entire_modbus_table.shelly.js
  */

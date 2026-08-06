@@ -1,6 +1,6 @@
 /**
  * @title External Display
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Application example demonstrating output formatted for an external display.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/Deye/SG02LP1/application_examples/external_display.shelly.js
  */

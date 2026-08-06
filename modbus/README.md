@@ -2,6 +2,31 @@
 
 This guide introduces Modbus RTU and how to use it with Shelly devices.
 
+## Structure
+
+Each device folder below has a paired `*_vc.shelly.js` script: it reads the
+device's entire documented register set every poll (printed to the console),
+and self-deploys a Virtual Components dashboard (via the standard
+`ensureVirtualComponents` helper used throughout this repo) for the 9 most
+valuable parameters, grouped together. The original single-purpose example
+scripts in each folder remain available for narrower reads/writes or as
+simpler starting points.
+
+- [`ComWinTop/MB308V/`](ComWinTop/MB308V/): generic 8-AI/4-AO/8-DI/12-DO IO
+  expansion module - `mb308v_vc.shelly.js`
+- [`CyberPower/CP1600EPFCLCD/`](CyberPower/CP1600EPFCLCD/): UPS - `cp1600epfclcd_vc.shelly.js`
+- [`Deye/SG01HP3/`](Deye/SG01HP3/): hybrid inverter, dual battery + generator + UPS load - `sg01hp3_vc.shelly.js`
+- [`Deye/SG02LP1/`](Deye/SG02LP1/): hybrid inverter with battery - `sg02lp1_vc.shelly.js`
+- [`Deye/SG03LP1/`](Deye/SG03LP1/): grid-tie inverter, no battery - `sg03lp1_vc.shelly.js`
+- [`Deye/SG04LP3/`](Deye/SG04LP3/): grid-tie inverter, no battery - `sg04lp3_vc.shelly.js`
+- [`Growatt/MIC_2500TL-X/`](Growatt/MIC_2500TL-X/): grid-tie inverter with battery block - `mic_2500tl_x_vc.shelly.js`
+- [`Growatt/MIN_4200TL-XE/`](Growatt/MIN_4200TL-XE/): grid-tie inverter with battery block - `min_4200tl_xe_vc.shelly.js`
+- [`Growatt/SFP5000/`](Growatt/SFP5000/): off-grid/hybrid inverter - `sfp5000_vc.shelly.js`
+- [`Growatt/SPH_10000TL3_BH-UP/`](Growatt/SPH_10000TL3_BH-UP/): grid-tie inverter with battery block - `sph_10000tl3_bh_up_vc.shelly.js`
+- [`Huawei/SUN-2000/`](Huawei/SUN-2000/): grid-tie inverter - `sun2000_vc.shelly.js`
+- [`IGEN/DTSD422/`](IGEN/DTSD422/): six-circuit energy meter (CT1-CT4 documented) - `dtsd422_vc.shelly.js`
+- [`MarsRock/G2_SUN_Series_Grid_Tie_Inverter/`](MarsRock/G2_SUN_Series_Grid_Tie_Inverter/): micro-inverter, only 5 registers total (all promoted to VC) - `g2_sun_series_vc.shelly.js`
+
 ## What is Modbus?
 
 Modbus is a communication protocol widely used for connecting electronic devices. It follows a Client-Server architecture:

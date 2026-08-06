@@ -1,6 +1,6 @@
 /**
  * @title Example Write Holding Register
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Minimal MODBUS holding register write example for the ComWinTop CWT-MB308V.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/ComWinTop/MB308V/example_write_holding_register.shelly.js
  */

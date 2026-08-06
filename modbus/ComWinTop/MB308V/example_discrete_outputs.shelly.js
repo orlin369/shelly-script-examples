@@ -1,6 +1,6 @@
 /**
  * @title Example Discrete Outputs
- * @description Modbus RTU example script. Adjust registers and configuration for your target device.
+ * @description Minimal MODBUS coil (digital output) write example for the ComWinTop CWT-MB308V.
  * @status under development
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/modbus/ComWinTop/MB308V/example_discrete_outputs.shelly.js
  */
