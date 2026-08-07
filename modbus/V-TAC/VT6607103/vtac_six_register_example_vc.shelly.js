@@ -303,7 +303,44 @@ function ensureVirtualComponents(manifest, done) {
 
 var UPDATE_RATE = 15; // seconds
 
-var MODBUS_ENDPOINT = ModbusController.get(1, { baud: 9600, mode: '8N1' });
+// ============================================================================
+// DYNAMIC MODBUS SLAVE ID
+// ============================================================================
+// The Modbus slave/unit ID must never be hardcoded into script logic. It is
+// exposed as a persisted Virtual Component (number:299, range 1-247) so it
+// can be reconfigured from an app/config UI without redeploying code.
+// getSlaveId() reads the component live on every use, clamps it into range,
+// and writes the clamped value back if it was out of range.
+
+var MIN_SLAVE_ID = 1;
+var MAX_SLAVE_ID = 247;
+var DEFAULT_SLAVE_ID = 1;
+var slaveIdHandle = null;
+
+function getSlaveId() {
+  var value = DEFAULT_SLAVE_ID;
+
+  if (slaveIdHandle) value = Number(slaveIdHandle.getValue());
+  if (value !== value) value = DEFAULT_SLAVE_ID; // NaN guard
+  value = Math.round(value);
+  if (value < MIN_SLAVE_ID) value = MIN_SLAVE_ID;
+  if (value > MAX_SLAVE_ID) value = MAX_SLAVE_ID;
+
+  if (slaveIdHandle && slaveIdHandle.getValue() !== value) {
+    slaveIdHandle.setValue(value);
+  }
+
+  return value;
+}
+
+// MODBUS-RTU endpoint; rebuilt whenever the slave ID Virtual Component changes.
+var MODBUS_ENDPOINT = null;
+var MODBUS_ENDPOINT_OPTS = { baud: 9600, mode: '8N1' };
+
+function rebuildModbusEndpoint() {
+  MODBUS_ENDPOINT = ModbusController.get(getSlaveId(), MODBUS_ENDPOINT_OPTS);
+  registerEntities(MODBUS_ENDPOINT, ENTITIES);
+}
 
 var ENTITIES = [
   { key: 'pv1', name: 'PV1 Voltage', units: 'V', reg: { addr: 5776, rtype: ModbusController.REGTYPE_HOLDING, itype: 'u16' }, scale: 0.1, min: 0, max: 600 },
@@ -342,6 +379,21 @@ function buildVirtualComponentsManifest() {
     groupMembers.push(ENTITIES[i].key);
     nextId += 1;
   }
+
+  components.push({
+    key: 'slaveId',
+    type: 'number',
+    id: 299,
+    config: {
+      name: 'Modbus Slave ID',
+      min: MIN_SLAVE_ID,
+      max: MAX_SLAVE_ID,
+      default_value: DEFAULT_SLAVE_ID,
+      persisted: true,
+      meta: { ui: { view: 'input' }, cloud: ['status'], role: 'modbus_id' }
+    }
+  });
+  groupMembers.push('slaveId');
 
   return {
     components: components,
@@ -387,14 +439,19 @@ function update() {
 // ============================================================================
 
 function init() {
-  registerEntities(MODBUS_ENDPOINT, ENTITIES);
-
   ensureVirtualComponents(VIRTUAL_COMPONENTS, function(ok, readyVc) {
     if (!ok) {
       console.log('ERROR: Virtual component setup failed');
       return;
     }
     vcHandles = readyVc.handles;
+    slaveIdHandle = readyVc.handles.slaveId;
+
+    rebuildModbusEndpoint();
+    slaveIdHandle.on('change', function() {
+      console.log('Modbus Slave ID changed -> ' + getSlaveId());
+      rebuildModbusEndpoint();
+    });
     Timer.set(UPDATE_RATE * 1000, true, update);
   });
 }

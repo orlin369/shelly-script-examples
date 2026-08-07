@@ -303,13 +303,50 @@ function ensureVirtualComponents(manifest, done) {
 
 var UPDATE_RATE = 5; // seconds
 
-var MODBUS_ENDPOINT = ModbusController.get(0x50, { baud: 115200, mode: '8N1' });
+// ============================================================================
+// DYNAMIC MODBUS SLAVE ID
+// ============================================================================
+// The Modbus slave/unit ID must never be hardcoded into script logic. It is
+// exposed as a persisted Virtual Component (number:299, range 1-247) so it
+// can be reconfigured from an app/config UI without redeploying code.
+// getSlaveId() reads the component live on every use, clamps it into range,
+// and writes the clamped value back if it was out of range.
 
-// Distance, holding register 0x34, mm.
-var ENTRY_DISTANCE = MODBUS_ENDPOINT.addEntity({ addr: 0x34, rtype: ModbusController.REGTYPE_HOLDING, itype: 'u16' });
+var MIN_SLAVE_ID = 1;
+var MAX_SLAVE_ID = 247;
+var DEFAULT_SLAVE_ID = 0x50;
+var slaveIdHandle = null;
 
-// Output state / status code, holding register 0x35 (print-only, no VC).
-var ENTRY_STATUS = MODBUS_ENDPOINT.addEntity({ addr: 0x35, rtype: ModbusController.REGTYPE_HOLDING, itype: 'u16' });
+function getSlaveId() {
+  var value = DEFAULT_SLAVE_ID;
+
+  if (slaveIdHandle) value = Number(slaveIdHandle.getValue());
+  if (value !== value) value = DEFAULT_SLAVE_ID; // NaN guard
+  value = Math.round(value);
+  if (value < MIN_SLAVE_ID) value = MIN_SLAVE_ID;
+  if (value > MAX_SLAVE_ID) value = MAX_SLAVE_ID;
+
+  if (slaveIdHandle && slaveIdHandle.getValue() !== value) {
+    slaveIdHandle.setValue(value);
+  }
+
+  return value;
+}
+
+// MODBUS-RTU endpoint; rebuilt whenever the slave ID Virtual Component changes.
+var MODBUS_ENDPOINT = null;
+var ENTRY_DISTANCE = null;
+var ENTRY_STATUS = null;
+
+function rebuildModbusEndpoint() {
+  MODBUS_ENDPOINT = ModbusController.get(getSlaveId(), { baud: 115200, mode: '8N1' });
+
+  // Distance, holding register 0x34, mm.
+  ENTRY_DISTANCE = MODBUS_ENDPOINT.addEntity({ addr: 0x34, rtype: ModbusController.REGTYPE_HOLDING, itype: 'u16' });
+
+  // Output state / status code, holding register 0x35 (print-only, no VC).
+  ENTRY_STATUS = MODBUS_ENDPOINT.addEntity({ addr: 0x35, rtype: ModbusController.REGTYPE_HOLDING, itype: 'u16' });
+}
 
 var STATUS_NAMES = {
   0x00: 'Valid',
@@ -345,10 +382,23 @@ var VIRTUAL_COMPONENTS = {
         persisted: false,
         meta: { ui: { view: 'progressbar' }, cloud: ['measurement'] }
       }
+    },
+    {
+      key: 'slaveId',
+      type: 'number',
+      id: 299,
+      config: {
+        name: 'Modbus Slave ID',
+        min: MIN_SLAVE_ID,
+        max: MAX_SLAVE_ID,
+        default_value: DEFAULT_SLAVE_ID,
+        persisted: true,
+        meta: { ui: { view: 'input' }, cloud: ['status'], role: 'modbus_id' }
+      }
     }
   ],
   groups: [
-    { id: 200, name: 'DFRobot SEN0492', components: ['distance'] }
+    { id: 200, name: 'DFRobot SEN0492', components: ['distance', 'slaveId'] }
   ]
 };
 
@@ -383,6 +433,14 @@ function init() {
       return;
     }
     vcHandles = readyVc.handles;
+    slaveIdHandle = readyVc.handles.slaveId;
+
+    rebuildModbusEndpoint();
+    slaveIdHandle.on('change', function() {
+      console.log('Modbus Slave ID changed -> ' + getSlaveId());
+      rebuildModbusEndpoint();
+    });
+
     Timer.set(UPDATE_RATE * 1000, true, update);
   });
 }

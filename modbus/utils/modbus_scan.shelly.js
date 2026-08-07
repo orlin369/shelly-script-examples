@@ -28,6 +28,11 @@
  *   - Reduce CONFIG.BAUDS / CONFIG.MODES to speed up the scan.
  *   - Lower CONFIG.ID_END if slave IDs are known to be small.
  *   - Add vendor-specific entries to PROBE_REGS for better identification.
+ *
+ * Note on the dynamic-slave-ID Virtual Component convention used elsewhere in
+ * this repo: this script is intentionally excluded from it. Its whole purpose
+ * is to sweep CONFIG.ID_START..CONFIG.ID_END looking for a device, so there is
+ * no single "current slave ID" to expose as a persisted setting.
  */
 
 // ============================================================================

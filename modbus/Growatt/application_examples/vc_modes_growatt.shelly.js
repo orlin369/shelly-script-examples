@@ -15,19 +15,48 @@
 let ENABLE_MODBUS_LOCAL = 0;
 let ENABLE_MODBUS_REMOTE = 1;
 
-// Inverter ID.
-let INVERTER_ID = 1;
+// ============================================================================
+// DYNAMIC MODBUS SLAVE ID
+// ============================================================================
+// The Modbus slave/unit ID must never be hardcoded into script logic. It is
+// exposed as a persisted Virtual Component (number:299, range 1-247) so it
+// can be reconfigured from an app/config UI without redeploying code.
+// getSlaveId() reads the component live on every use, clamps it into range,
+// and writes the clamped value back if it was out of range.
 
-if (ENABLE_MODBUS_LOCAL){
-// Get a MODBUS-RTU endpoint: ID 1, baud rate 9600, 8 data bits, No parity, 1 stop bit.
-let MODBUS_ENDPOINT = ModbusController.get(INVERTER_ID, { baud: 9600, mode: "8N1" });
+var MIN_SLAVE_ID = 1;
+var MAX_SLAVE_ID = 247;
+var DEFAULT_SLAVE_ID = 1;
+var slaveIdHandle = null;
 
-let ENTRY_OUTPUT_CONFIG = MODBUS_ENDPOINT.addEntity({ addr: 1, rtype: ModbusController.REGTYPE_HOLDING, itype: "u16" });
+function getSlaveId() {
+  var value = DEFAULT_SLAVE_ID;
 
-let ENTRY_CHARGE_CONFIG = MODBUS_ENDPOINT.addEntity({ addr: 1, rtype: ModbusController.REGTYPE_HOLDING, itype: "u16" });
+  if (slaveIdHandle) value = Number(slaveIdHandle.getValue());
+  if (value !== value) value = DEFAULT_SLAVE_ID; // NaN guard
+  value = Math.round(value);
+  if (value < MIN_SLAVE_ID) value = MIN_SLAVE_ID;
+  if (value > MAX_SLAVE_ID) value = MAX_SLAVE_ID;
+
+  if (slaveIdHandle && slaveIdHandle.getValue() !== value) {
+    slaveIdHandle.setValue(value);
+  }
+
+  return value;
 }
 
-if (ENABLE_MODBUS_LOCAL){
+// MODBUS-RTU endpoint; rebuilt whenever the slave ID Virtual Component changes.
+// Only created when ENABLE_MODBUS_LOCAL is set (this example defaults to the
+// HTTP-remote path, ENABLE_MODBUS_REMOTE).
+var MODBUS_ENDPOINT = null;
+var ENTRY_OUTPUT_CONFIG = null;
+var ENTRY_CHARGE_CONFIG = null;
+
+function rebuildModbusEndpoint() {
+  if (!ENABLE_MODBUS_LOCAL) return;
+  MODBUS_ENDPOINT = ModbusController.get(getSlaveId(), { baud: 9600, mode: "8N1" });
+  ENTRY_OUTPUT_CONFIG = MODBUS_ENDPOINT.addEntity({ addr: 1, rtype: ModbusController.REGTYPE_HOLDING, itype: "u16" });
+  ENTRY_CHARGE_CONFIG = MODBUS_ENDPOINT.addEntity({ addr: 1, rtype: ModbusController.REGTYPE_HOLDING, itype: "u16" });
 }
 
 // ============================================================================
@@ -351,10 +380,23 @@ var VIRTUAL_COMPONENTS = {
         persisted: false,
         meta: { ui: { view: 'dropdown' } }
       }
+    },
+    {
+      key: 'slaveId',
+      type: 'number',
+      id: 299,
+      config: {
+        name: 'Modbus Slave ID',
+        min: MIN_SLAVE_ID,
+        max: MAX_SLAVE_ID,
+        default_value: DEFAULT_SLAVE_ID,
+        persisted: true,
+        meta: { ui: { view: 'input' }, cloud: ['status'], role: 'modbus_id' }
+      }
     }
   ],
   groups: [
-    { id: 200, name: 'Growatt VC Modes', components: ['outputConfig', 'chargeConfig'] }
+    { id: 200, name: 'Growatt VC Modes', components: ['outputConfig', 'chargeConfig', 'slaveId'] }
   ]
 };
 
@@ -377,6 +419,13 @@ function init(){
     output_config_vc = readyVc.handles.outputConfig;
     charge_config_vc = readyVc.handles.chargeConfig;
 
+    slaveIdHandle = readyVc.handles.slaveId;
+    rebuildModbusEndpoint();
+    slaveIdHandle.on('change', function() {
+      console.log('Modbus Slave ID changed -> ' + getSlaveId());
+      rebuildModbusEndpoint();
+    });
+
     initModes();
   });
 }
@@ -396,7 +445,7 @@ function initModes(){
     if (ENABLE_MODBUS_REMOTE){
         Shelly.call("HTTP.GET",
         {
-            url: "http://minhome.net:8060/rpc/MRC.ReadHoldingRegisters?sid="+INVERTER_ID+"&qty=1&addr=1&itype=regtype_holding",
+            url: "http://minhome.net:8060/rpc/MRC.ReadHoldingRegisters?sid="+getSlaveId()+"&qty=1&addr=1&itype=regtype_holding",
         },
         function(result, error_code, error_message) {
             if (error_code == 0){
@@ -412,7 +461,7 @@ function initModes(){
         });
         Shelly.call("HTTP.GET",
         {
-            url: "http://minhome.net:8060/rpc/MRC.ReadHoldingRegisters?sid="+INVERTER_ID+"&qty=1&addr=2&itype=regtype_holding",
+            url: "http://minhome.net:8060/rpc/MRC.ReadHoldingRegisters?sid="+getSlaveId()+"&qty=1&addr=2&itype=regtype_holding",
         },
         function(result, error_code, error_message) {
             if (error_code == 0){
