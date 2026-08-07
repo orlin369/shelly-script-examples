@@ -340,10 +340,45 @@ function ensureVirtualComponents(manifest, done) {
 // CONFIGURATION
 // ============================================================================
 
-var UPDATE_RATE = 3; // seconds
-var DEVICE_ID = 2;
+var UPDATE_RATE = 3; // ============================================================================
+// DYNAMIC MODBUS SLAVE ID
+// ============================================================================
+// The Modbus slave/unit ID must never be hardcoded into script logic. It is
+// exposed as a persisted Virtual Component (number:299, range 1-247) so it
+// can be reconfigured from an app/config UI without redeploying code.
+// getSlaveId() reads the component live on every use, clamps it into range,
+// and writes the clamped value back if it was out of range.
 
-var MODBUS_ENDPOINT = ModbusController.get(DEVICE_ID, { baud: 9600, mode: '8N1' });
+var MIN_SLAVE_ID = 1;
+var MAX_SLAVE_ID = 247;
+var DEFAULT_SLAVE_ID = 2;
+var slaveIdHandle = null;
+
+function getSlaveId() {
+  var value = DEFAULT_SLAVE_ID;
+
+  if (slaveIdHandle) value = Number(slaveIdHandle.getValue());
+  if (value !== value) value = DEFAULT_SLAVE_ID; // NaN guard
+  value = Math.round(value);
+  if (value < MIN_SLAVE_ID) value = MIN_SLAVE_ID;
+  if (value > MAX_SLAVE_ID) value = MAX_SLAVE_ID;
+
+  if (slaveIdHandle && slaveIdHandle.getValue() !== value) {
+    slaveIdHandle.setValue(value);
+  }
+
+  return value;
+}
+
+// MODBUS-RTU endpoint; rebuilt whenever the slave ID Virtual Component changes.
+var MODBUS_ENDPOINT = null;
+var MODBUS_ENDPOINT_OPTS = { baud: 9600, mode: '8N1' };
+
+function rebuildModbusEndpoint() {
+  MODBUS_ENDPOINT = ModbusController.get(getSlaveId(), MODBUS_ENDPOINT_OPTS);
+  registerEntities();
+}
+
 var AI_SCALE = 1 / 1100; // matches example_input_register.shelly.js voltage formula
 
 // Analog inputs - each gets a Virtual Component (AI0..AI7).
@@ -428,6 +463,21 @@ function buildVirtualComponentsManifest() {
     }
   });
   groupMembers.push('diSummary');
+
+  components.push({
+    key: 'slaveId',
+    type: 'number',
+    id: 299,
+    config: {
+      name: 'Modbus Slave ID',
+      min: MIN_SLAVE_ID,
+      max: MAX_SLAVE_ID,
+      default_value: DEFAULT_SLAVE_ID,
+      persisted: true,
+      meta: { ui: { view: 'input' }, cloud: ['status'], role: 'modbus_id' }
+    }
+  });
+  groupMembers.push('slaveId');
 
   return {
     components: components,
@@ -518,8 +568,6 @@ function registerEntities() {
 function main() {
   print('ComWinTop CWT-MB308V MODBUS-RTU monitor + VC');
 
-  registerEntities();
-
   ensureVirtualComponents(VIRTUAL_COMPONENTS, function(ok, readyVc) {
     if (!ok) {
       print('ERROR: Virtual component setup failed');
@@ -527,6 +575,13 @@ function main() {
     }
 
     vcHandles = readyVc.handles;
+    slaveIdHandle = readyVc.handles.slaveId;
+
+    rebuildModbusEndpoint();
+    slaveIdHandle.on('change', function() {
+      print('Modbus Slave ID changed -> ' + getSlaveId());
+      rebuildModbusEndpoint();
+    });
     print('Ready; polling every ' + UPDATE_RATE + 's, 8 AI + 8 DI + 4 AO + 12 DO channels (' +
       VIRTUAL_COMPONENTS.components.length + ' on Virtual Components)');
 

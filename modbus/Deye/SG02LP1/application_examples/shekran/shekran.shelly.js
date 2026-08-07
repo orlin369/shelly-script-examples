@@ -24,14 +24,8 @@
 // Update rate (sec)
 var UPDATE_RATE = 60;
 
-// Inverter ID.
-let INVERTER_ID = 1;
-
 // SHEKRAN display JSON-RPC 2.0 endpoint.
 let SHEKRAN_RPC_URL = "http://10.101.2.118/rpc";
-
-// Get a MODBUS-RTU endpoint: ID 1, baud rate 9600, 8 data bits, No parity, 1 stop bit.
-let MODBUS_ENDPOINT = ModbusController.get(INVERTER_ID, { baud: 9600, mode: "8N1" });
 
 // ============================================================================
 // VIRTUAL COMPONENT STANDARD HELPER
@@ -323,6 +317,49 @@ function ensureVirtualComponents(manifest, done) {
   });
 }
 
+// ============================================================================
+// DYNAMIC MODBUS SLAVE ID
+// ============================================================================
+// The Modbus slave/unit ID must never be hardcoded into script logic. It is
+// exposed as a persisted Virtual Component (number:299, range 1-247) so it
+// can be reconfigured from an app/config UI without redeploying code.
+// getSlaveId() reads the component live on every use, clamps it into range,
+// and writes the clamped value back if it was out of range.
+
+var MIN_SLAVE_ID = 1;
+var MAX_SLAVE_ID = 247;
+var DEFAULT_SLAVE_ID = 1;
+var slaveIdHandle = null;
+
+function getSlaveId() {
+  var value = DEFAULT_SLAVE_ID;
+
+  if (slaveIdHandle) value = Number(slaveIdHandle.getValue());
+  if (value !== value) value = DEFAULT_SLAVE_ID; // NaN guard
+  value = Math.round(value);
+  if (value < MIN_SLAVE_ID) value = MIN_SLAVE_ID;
+  if (value > MAX_SLAVE_ID) value = MAX_SLAVE_ID;
+
+  if (slaveIdHandle && slaveIdHandle.getValue() !== value) {
+    slaveIdHandle.setValue(value);
+  }
+
+  return value;
+}
+
+// MODBUS-RTU endpoint; rebuilt whenever the slave ID Virtual Component changes.
+var MODBUS_ENDPOINT = null;
+
+function rebuildModbusEndpoint() {
+  var i;
+
+  MODBUS_ENDPOINT = ModbusController.get(getSlaveId(), { baud: 9600, mode: "8N1" });
+
+  for (i = 0; i < ENTITIES.length; i++) {
+    ENTITIES[i].handle = MODBUS_ENDPOINT.addEntity(ENTITIES[i].reg);
+  }
+}
+
 // ENTITIES table describing all parameters + mapping to virtual components and SHEKRAN widgets.
 // widgetId: SHEKRAN widget ID on the "main" screen (null if not displayed).
 let ENTITIES = [
@@ -512,6 +549,21 @@ function buildVirtualComponentsManifest() {
     groupMembers.push(key);
   }
 
+  components.push({
+    key: 'slaveId',
+    type: 'number',
+    id: 299,
+    config: {
+      name: 'Modbus Slave ID',
+      min: MIN_SLAVE_ID,
+      max: MAX_SLAVE_ID,
+      default_value: DEFAULT_SLAVE_ID,
+      persisted: true,
+      meta: { ui: { view: 'input' }, cloud: ['status'], role: 'modbus_id' }
+    }
+  });
+  groupMembers.push('slaveId');
+
   return {
     components: components,
     groups: [
@@ -615,13 +667,6 @@ function update() {
     Here we register all MODBUS entities and virtual components based on ENTITIES.
 */
 function init() {
-  for (let i = 0; i < ENTITIES.length; i++) {
-    let ent = ENTITIES[i];
-
-    // Create Modbus entity
-    ent.handle = MODBUS_ENDPOINT.addEntity(ent.reg);
-  }
-
   ensureVirtualComponents(VIRTUAL_COMPONENTS, function(ok, readyVc) {
     if (!ok) {
       console.log('ERROR: Virtual component setup failed');
@@ -633,6 +678,13 @@ function init() {
         ENTITIES[i].vcHandle = readyVc.handles['p' + i];
       }
     }
+
+    slaveIdHandle = readyVc.handles.slaveId;
+    rebuildModbusEndpoint();
+    slaveIdHandle.on('change', function() {
+      console.log('Modbus Slave ID changed -> ' + getSlaveId());
+      rebuildModbusEndpoint();
+    });
 
     // Load the main screen on the SHEKRAN display at startup.
     Shelly.call("HTTP.POST", {
