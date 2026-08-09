@@ -664,7 +664,8 @@
       "solar",
       "battery",
       "monitoring",
-      "sigenergy"
+      "sigenergy",
+      "modbus-controller"
     ]
   },
   {
@@ -1069,7 +1070,8 @@
     "tags": [
       "the-pill",
       "modbus-rtu",
-      "comwintop"
+      "comwintop",
+      "modbus-software"
     ]
   },
   {
@@ -1080,7 +1082,8 @@
       "the-pill",
       "modbus-rtu",
       "virtual-components",
-      "comwintop"
+      "comwintop",
+      "modbus-software"
     ]
   },
   {
@@ -1094,7 +1097,8 @@
       "sensors",
       "monitoring",
       "distance",
-      "dfrobot"
+      "dfrobot",
+      "modbus-software"
     ]
   },
   {
@@ -1109,7 +1113,8 @@
       "sensors",
       "monitoring",
       "distance",
-      "dfrobot"
+      "dfrobot",
+      "modbus-software"
     ]
   },
   {
@@ -1121,7 +1126,8 @@
       "modbus-rtu",
       "rs485",
       "solar",
-      "davis"
+      "davis",
+      "modbus-software"
     ]
   },
   {
@@ -1134,7 +1140,8 @@
       "rs485",
       "virtual-components",
       "solar",
-      "davis"
+      "davis",
+      "modbus-software"
     ]
   },
   {
@@ -1146,7 +1153,8 @@
       "modbus-rtu",
       "solar",
       "inverter",
-      "deye"
+      "deye",
+      "modbus-software"
     ]
   },
   {
@@ -1159,7 +1167,8 @@
       "virtual-components",
       "solar",
       "inverter",
-      "deye"
+      "deye",
+      "modbus-software"
     ]
   },
   {
@@ -1171,7 +1180,8 @@
       "modbus-rtu",
       "rs485",
       "battery",
-      "jkess"
+      "jkess",
+      "modbus-software"
     ]
   },
   {
@@ -1184,7 +1194,8 @@
       "rs485",
       "virtual-components",
       "battery",
-      "jkess"
+      "jkess",
+      "modbus-software"
     ]
   },
   {
@@ -1197,7 +1208,8 @@
       "temperature",
       "hvac",
       "building-management",
-      "linkedgo"
+      "linkedgo",
+      "modbus-software"
     ]
   },
   {
@@ -1211,7 +1223,8 @@
       "temperature",
       "hvac",
       "building-management",
-      "linkedgo"
+      "linkedgo",
+      "modbus-software"
     ]
   },
   {
@@ -1224,7 +1237,8 @@
       "energy",
       "solar",
       "inverter",
-      "marsrock"
+      "marsrock",
+      "modbus-software"
     ]
   },
   {
@@ -1238,7 +1252,8 @@
       "energy",
       "solar",
       "inverter",
-      "marsrock"
+      "marsrock",
+      "modbus-software"
     ]
   },
   {
@@ -1252,7 +1267,8 @@
       "temperature",
       "energy",
       "battery",
-      "marstek"
+      "marstek",
+      "modbus-software"
     ]
   },
   {
@@ -1266,7 +1282,8 @@
       "energy",
       "battery",
       "control",
-      "marstek"
+      "marstek",
+      "modbus-software"
     ]
   },
   {
@@ -1279,7 +1296,8 @@
       "virtual-components",
       "battery",
       "monitoring",
-      "marstek"
+      "marstek",
+      "modbus-software"
     ]
   },
   {
@@ -1292,7 +1310,8 @@
       "virtual-components",
       "energy",
       "battery",
-      "marstek"
+      "marstek",
+      "modbus-software"
     ]
   },
   {
@@ -1303,7 +1322,8 @@
       "the-pill",
       "modbus-rtu",
       "monitoring",
-      "utility"
+      "utility",
+      "modbus-software"
     ]
   },
   {
@@ -1314,7 +1334,8 @@
       "the-pill",
       "modbus-rtu",
       "rs485",
-      "wirenboard"
+      "wirenboard",
+      "modbus-software"
     ]
   },
   {
@@ -1326,7 +1347,8 @@
       "modbus-rtu",
       "rs485",
       "virtual-components",
-      "wirenboard"
+      "wirenboard",
+      "modbus-software"
     ]
   },
   {
@@ -1342,7 +1364,8 @@
       "temperature",
       "infrared",
       "presence",
-      "wirenboard"
+      "wirenboard",
+      "modbus-software"
     ]
   },
   {
@@ -1354,7 +1377,8 @@
       "modbus-rtu",
       "infrared",
       "wirenboard",
-      "utility"
+      "utility",
+      "modbus-software"
     ]
   },
   {
@@ -1367,7 +1391,8 @@
       "rs485",
       "configuration",
       "wirenboard",
-      "utility"
+      "utility",
+      "modbus-software"
     ]
   },
   {
@@ -1383,7 +1408,8 @@
       "temperature",
       "infrared",
       "presence",
-      "wirenboard"
+      "wirenboard",
+      "modbus-software"
     ]
   },
   {
