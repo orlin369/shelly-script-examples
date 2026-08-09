@@ -6,6 +6,87 @@
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/Marstek/VenusE/venus_e_control_vc.shelly.js
  */
 
+/* PILOT: Managed Virtual Components (https://shelly-api-docs.shelly.cloud/gen2/Scripts/APIs/Virtual/#managed-virtual-components)
+ * The script declares its own Virtual Component(s) here; the firmware creates/updates/
+ * removes them automatically and ties their lifecycle to this script. Access via
+ * Script.getVcHandle(role) - never hardcode the numeric id. This is the definitive
+ * group test: 6 heterogeneous components (number/text/number/number/enum/number) in
+ * one declared group, checking whether the "components" list in the group's config
+ * auto-populates membership, or whether a manual Group.Set call is still required. */
+/* @meta {
+  "vc": {
+    "soc": {
+      "type": "number",
+      "config": {
+        "name": "Battery SOC",
+        "default_value": 0,
+        "min": 0,
+        "max": 100,
+        "persisted": false,
+        "meta": { "ui": { "view": "progressbar", "unit": "%", "step": 1 } }
+      }
+    },
+    "batteryPower": {
+      "type": "number",
+      "config": {
+        "name": "Battery Power",
+        "default_value": 0,
+        "min": -2500,
+        "max": 2500,
+        "persisted": false,
+        "meta": { "ui": { "view": "label", "unit": "W", "step": 1 } }
+      }
+    },
+    "inverterState": {
+      "type": "text",
+      "config": {
+        "name": "Inverter State",
+        "default_value": "unknown",
+        "persisted": false,
+        "meta": { "ui": { "view": "label", "maxLength": 32 } }
+      }
+    },
+    "controlPower": {
+      "type": "number",
+      "config": {
+        "name": "Control Power",
+        "default_value": 500,
+        "min": 100,
+        "max": 2500,
+        "persisted": true,
+        "meta": { "ui": { "view": "slider", "unit": "W", "step": 1 } }
+      }
+    },
+    "mode": {
+      "type": "enum",
+      "config": {
+        "name": "Charge Control",
+        "options": ["Stop", "Force Charge", "Discharge"],
+        "default_value": "Stop",
+        "meta": { "ui": { "view": "dropdown" } }
+      }
+    },
+    "slaveId": {
+      "type": "number",
+      "config": {
+        "name": "Modbus Slave ID",
+        "min": 1,
+        "max": 247,
+        "default_value": 1,
+        "persisted": true,
+        "meta": { "ui": { "view": "input" }, "cloud": ["status"], "role": "modbus_id" }
+      }
+    },
+    "controlGroup": {
+      "type": "group",
+      "config": {
+        "name": "Marstek VenusE Control",
+        "components": ["soc", "batteryPower", "inverterState", "controlPower", "mode", "slaveId"]
+      }
+    }
+  }
+} */
+
 /**
  * Marstek VenusE Charge/Discharge Control + Virtual Components
  *
@@ -21,17 +102,16 @@
  * - Venus RJ45 pins 3 and 6 (NC) -> Leave disconnected
  * - Venus RJ45 pins 4 and 5 (+5 V) -> Leave disconnected
  *
- * Components created (8 total):
- * - group:220   Marstek VenusE Control
- * - number:220  Battery SOC, 0..100 %
- * - number:221  Battery Power, -2500..2500 W
- * - number:222  Inverter State, 0..6
- * - number:223  Control Power, 100..2500 W (persisted)
- * - button:220  Force Charge
- * - button:221  Stop
- * - button:222  Discharge
+ * Components declared (6 + 1 group), all managed via @meta vc above:
+ * - group   Marstek VenusE Control
+ * - number  Battery SOC, 0..100 %
+ * - number  Battery Power, -2500..2500 W
+ * - text    Inverter State, human-readable (e.g. "charging")
+ * - number  Control Power, 100..2500 W (persisted)
+ * - enum    Charge Control (dropdown): Stop / Force Charge / Discharge
+ * - number  Modbus Slave ID, 1..247 (persisted)
  *
- * Control sequence:
+ * Control sequence (triggered by selecting an option in the Charge Control dropdown):
  * - Force Charge: write 0x55AA to 42000, power to 42020, then 1 to 42010.
  * - Stop: write 0 to 42010.
  * - Discharge: write 0x55AA to 42000, power to 42021, then 2 to 42010.
@@ -45,342 +125,6 @@
  * - Use this layout instead of the other VenusE VC scripts; The Pill supports
  *   only 10 Virtual Components total on the tested firmware.
  */
-
-// ============================================================================
-// VIRTUAL COMPONENT STANDARD HELPER
-// ============================================================================
-//
-// Usage:
-//
-// var VIRTUAL_COMPONENTS = {
-//   components: [
-//     {
-//       key: "soc",
-//       type: "number",
-//       id: 200, // optional; when omitted the helper creates the next free one
-//       config: {
-//         name: "Battery SOC",
-//         min: 0,
-//         max: 100,
-//         unit: "%",
-//         meta: { ui: { view: "progressbar" }, cloud: ["measurement"] }
-//       }
-//     },
-//     {
-//       key: "status",
-//       type: "text",
-//       config: {
-//         name: "Status",
-//         default_value: "",
-//         persisted: false,
-//         meta: { ui: { view: "label", maxLength: 255 }, cloud: ["log"] }
-//       }
-//     }
-//   ],
-//   groups: [
-//     { id: 200, name: "Battery", components: ["soc", "status"] }
-//   ]
-// };
-//
-// ensureVirtualComponents(VIRTUAL_COMPONENTS, function(ok, vc) {
-//   if (!ok) {
-//     print("Virtual Component setup failed");
-//     return;
-//   }
-//
-//   vc.handles.soc.setValue(73);
-//   vc.handles.status.setValue("ready");
-// });
-//
-// Notes:
-// - `key` is only the logical name inside your script.
-// - `type` is a Shelly dynamic component type: number, boolean, text, enum,
-//   button, group.
-// - For fixed IDs, the helper checks whether the existing component config
-//   matches. If not, it deletes and recreates it.
-// - Without fixed IDs, the helper searches by type + config.name. If a matching
-//   component exists and fits the config, it reuses it. If not, it creates a new
-//   component and stores the assigned id.
-// - The callback receives `vc.ids[key]`, `vc.keys[key]`, and `vc.handles[key]`.
-// ============================================================================
-
-function ensureVirtualComponents(manifest, done) {
-  var VC_HELPER_DELAY_MS = 150;
-  var state = {
-    existing: [],
-    ids: {},
-    keys: {},
-    handles: {},
-    ok: true
-  };
-
-  function log(msg) {
-    print("[VC] " + msg);
-  }
-
-  function componentKey(type, id) {
-    return type + ":" + String(id);
-  }
-
-
-  function shallowConfigMatches(desired, current) {
-    var k;
-
-    if (!desired || !current) return false;
-
-    for (k in desired) {
-      if (k === "meta") {
-        if (JSON.stringify(desired.meta) !== JSON.stringify(current.meta || {})) return false;
-      } else if (typeof desired[k] === "object" && desired[k] !== null) {
-        if (JSON.stringify(desired[k]) !== JSON.stringify(current[k])) return false;
-      } else if (desired[k] !== current[k]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function normalizeComponent(spec) {
-    if (!spec.config) spec.config = {};
-    if (!spec.config.name) spec.config.name = spec.key;
-    return spec;
-  }
-
-  function findExistingByName(type, name) {
-    var i;
-    var c;
-    for (i = 0; i < state.existing.length; i++) {
-      c = state.existing[i];
-      if (c.type === type && c.name === name) return c;
-    }
-    return null;
-  }
-
-  function remember(spec, id) {
-    var key = componentKey(spec.type, id);
-    state.ids[spec.key] = id;
-    state.keys[spec.key] = key;
-    state.handles[spec.key] = Virtual.getHandle(key);
-  }
-
-  function getConfig(type, id) {
-    return Shelly.getComponentConfig(type, id);
-  }
-
-  function deleteComponent(key, cb) {
-    Shelly.call("Virtual.Delete", { key: key }, function(res, errCode, errMsg) {
-      if (errCode !== 0) {
-        log("Virtual.Delete skipped for " + key + ": " + String(errCode) + " " + String(errMsg));
-      }
-      Timer.set(VC_HELPER_DELAY_MS, false, cb);
-    });
-  }
-
-  function addComponent(spec, cb) {
-    var params = { type: spec.type, config: spec.config };
-    if (spec.id !== undefined && spec.id !== null) params.id = spec.id;
-
-    Shelly.call("Virtual.Add", params, function(res, errCode, errMsg) {
-      var id;
-
-      if (errCode !== 0) {
-        log("Virtual.Add failed for " + spec.key + ": " + String(errCode) + " " + String(errMsg));
-        state.ok = false;
-        cb(false);
-        return;
-      }
-
-      id = spec.id;
-      if ((id === undefined || id === null) && res && res.id !== undefined) id = res.id;
-      if (id === undefined || id === null) {
-        log("Virtual.Add did not return id for " + spec.key);
-        state.ok = false;
-        cb(false);
-        return;
-      }
-
-      remember(spec, id);
-      log("Created " + state.keys[spec.key] + " " + spec.config.name);
-      Timer.set(VC_HELPER_DELAY_MS, false, function() { cb(true); });
-    });
-  }
-
-  function ensureOne(spec, cb) {
-    var current;
-    var existing;
-    var key;
-
-    spec = normalizeComponent(spec);
-
-    if (spec.id !== undefined && spec.id !== null) {
-      current = getConfig(spec.type, spec.id);
-      key = componentKey(spec.type, spec.id);
-
-      if (current) {
-        if (shallowConfigMatches(spec.config, current)) {
-          remember(spec, spec.id);
-          cb(true);
-          return;
-        }
-
-        log("Recreating mismatched " + key + " " + spec.config.name);
-        deleteComponent(key, function() { addComponent(spec, cb); });
-        return;
-      }
-
-      addComponent(spec, cb);
-      return;
-    }
-
-    existing = findExistingByName(spec.type, spec.config.name);
-    if (existing && shallowConfigMatches(spec.config, existing.config)) {
-      remember(spec, existing.id);
-      cb(true);
-      return;
-    }
-
-    if (existing) {
-      log("Existing " + existing.key + " does not fit " + spec.config.name + "; creating a new one");
-    }
-    addComponent(spec, cb);
-  }
-
-  function ensureList(index, cb) {
-    var list = manifest.components || [];
-    if (index >= list.length) {
-      cb();
-      return;
-    }
-
-    ensureOne(list[index], function() {
-      Timer.set(VC_HELPER_DELAY_MS, false, function() {
-        ensureList(index + 1, cb);
-      });
-    });
-  }
-
-  function createGroupConfig(name) {
-    return { name: name, meta: { ui: { view: "group" } } };
-  }
-
-  function groupMembers(group) {
-    var members = [];
-    var i;
-    var logicalKey;
-
-    for (i = 0; i < group.components.length; i++) {
-      logicalKey = group.components[i];
-      if (state.keys[logicalKey]) members.push(state.keys[logicalKey]);
-    }
-
-    return members;
-  }
-
-  function ensureGroup(index, cb) {
-    var groups = manifest.groups || [];
-    var group;
-    var cfg;
-    var current;
-    var key;
-
-    if (index >= groups.length) {
-      cb();
-      return;
-    }
-
-    group = groups[index];
-    cfg = createGroupConfig(group.name);
-    key = componentKey("group", group.id);
-    current = getConfig("group", group.id);
-
-    function setMembersAndContinue() {
-      Shelly.call("Group.Set", { id: group.id, value: groupMembers(group) }, function(res, errCode, errMsg) {
-        if (errCode !== 0) {
-          log("Group.Set failed for " + key + ": " + String(errCode) + " " + String(errMsg));
-          state.ok = false;
-        }
-        Timer.set(VC_HELPER_DELAY_MS, false, function() { ensureGroup(index + 1, cb); });
-      });
-    }
-
-    if (current && shallowConfigMatches(cfg, current)) {
-      setMembersAndContinue();
-      return;
-    }
-
-    function addGroup() {
-      Shelly.call("Virtual.Add", { type: "group", id: group.id, config: cfg }, function(res, errCode, errMsg) {
-        if (errCode !== 0) {
-          log("Virtual.Add group failed for " + key + ": " + String(errCode) + " " + String(errMsg));
-          state.ok = false;
-          Timer.set(VC_HELPER_DELAY_MS, false, function() { ensureGroup(index + 1, cb); });
-          return;
-        }
-        setMembersAndContinue();
-      });
-    }
-
-    if (current) {
-      deleteComponent(key, addGroup);
-    } else {
-      addGroup();
-    }
-  }
-
-  function readExistingPage(offset, cb) {
-    Shelly.call("Shelly.GetComponents", { dynamic_only: true, offset: offset }, function(res, errCode, errMsg) {
-      var raw;
-      var total;
-      var i;
-      var c;
-      var cfg;
-      var keyParts;
-
-      if (errCode !== 0) {
-        log("Shelly.GetComponents failed: " + String(errCode) + " " + String(errMsg));
-        state.ok = false;
-        cb();
-        return;
-      }
-
-      raw = (res && res.components) ? res.components : [];
-      total = res ? (res.total || raw.length) : raw.length;
-
-      for (i = 0; i < raw.length; i++) {
-        c = raw[i];
-        cfg = c.config || {};
-        keyParts = (c.key || "").split(":");
-        state.existing.push({
-          key: c.key || componentKey(c.type || keyParts[0], cfg.id),
-          type: c.type || keyParts[0],
-          id: cfg.id,
-          name: cfg.name,
-          config: cfg
-        });
-      }
-
-      if (offset + raw.length < total && raw.length > 0) {
-        readExistingPage(offset + raw.length, cb);
-      } else {
-        cb();
-      }
-    });
-  }
-
-  readExistingPage(0, function() {
-    ensureList(0, function() {
-      ensureGroup(0, function() {
-        done(state.ok, {
-          ids: state.ids,
-          keys: state.keys,
-          handles: state.handles
-        });
-      });
-    });
-  });
-}
-
 
 // ============================================================================
 // CONFIGURATION
@@ -402,15 +146,16 @@ var CONFIG = {
 // DYNAMIC MODBUS SLAVE ID
 // ============================================================================
 // The Modbus slave/unit ID must never be hardcoded into script logic. It is
-// exposed as a persisted Virtual Component (number:299, range 1-247) so it
-// can be reconfigured from an app/config UI without redeploying code.
-// getSlaveId() reads the component live on every use, clamps it into range,
-// and writes the clamped value back if it was out of range.
+// exposed as a managed Virtual Component (declared in the @meta vc block
+// above, range 1-247) so it can be reconfigured from an app/config UI without
+// redeploying code. getSlaveId() reads the component live on every use,
+// clamps it into range, and writes the clamped value back if it was out of
+// range.
 
 var MIN_SLAVE_ID = 1;
 var MAX_SLAVE_ID = 247;
 var DEFAULT_SLAVE_ID = 1;
-var slaveIdHandle = null;
+var slaveIdHandle = Script.getVcHandle("slaveId");
 
 function getSlaveId() {
   var value = DEFAULT_SLAVE_ID;
@@ -438,21 +183,23 @@ var REG = {
   DISCHARGE_POWER: 42021
 };
 
-var COMPONENTS = {
-  group: 'group:220',
-  soc: 'number:220',
-  batteryPower: 'number:221',
-  inverterState: 'number:222',
-  controlPower: 'number:223',
-  forceCharge: 'button:220',
-  stop: 'button:221',
-  discharge: 'button:222'
-};
+// ============================================================================
+// MANAGED VIRTUAL COMPONENT HANDLES
+// ============================================================================
+// Resolved synchronously via Script.getVcHandle(role) - the firmware creates
+// components declared in @meta vc before the script body runs, so no async
+// setup callback is needed here.
+
+var socHandle = Script.getVcHandle("soc");
+var batteryPowerHandle = Script.getVcHandle("batteryPower");
+var inverterStateHandle = Script.getVcHandle("inverterState");
+var controlPowerHandle = Script.getVcHandle("controlPower");
+var modeHandle = Script.getVcHandle("mode");
 
 var TELEMETRY = [
-  { name: 'Battery SOC', addr: REG.SOC, qty: 1, type: 'u16', scale: 1, handle: null },
-  { name: 'Battery Power', addr: REG.BATTERY_POWER, qty: 2, type: 's32', scale: 1, handle: null },
-  { name: 'Inverter State', addr: REG.INVERTER_STATE, qty: 1, type: 'u16', scale: 1, handle: null }
+  { name: 'Battery SOC', addr: REG.SOC, qty: 1, type: 'u16', scale: 1, fc: 0x03, handle: socHandle },
+  { name: 'Battery Power', addr: REG.BATTERY_POWER, qty: 2, type: 's32', scale: 1, fc: 0x03, handle: batteryPowerHandle },
+  { name: 'Inverter State', addr: REG.INVERTER_STATE, qty: 1, type: 'u16', scale: 1, fc: 0x03, handle: inverterStateHandle }
 ];
 
 // ============================================================================
@@ -467,7 +214,6 @@ var state = {
   pollTimer: null,
   isReady: false,
   isControlling: false,
-  powerHandle: null,
   stopRequested: false,
   stopRetryTimer: null,
   queuedMode: null,
@@ -516,10 +262,10 @@ function bytesToStr(bytes) {
   return str;
 }
 
-function buildReadFrame(addr, qty) {
+function buildReadFrame(fc, addr, qty) {
   return addCRC([
     getSlaveId() & 0xFF,
-    0x03,
+    fc,
     (addr >> 8) & 0xFF,
     addr & 0xFF,
     (qty >> 8) & 0xFF,
@@ -576,86 +322,25 @@ function stateName(value) {
 function getControlPower() {
   var value = CONFIG.DEFAULT_POWER;
 
-  if (state.powerHandle) value = Number(state.powerHandle.getValue());
+  if (controlPowerHandle) value = Number(controlPowerHandle.getValue());
   if (value !== value) value = CONFIG.DEFAULT_POWER;
   value = Math.round(value);
   if (value < CONFIG.MIN_POWER) value = CONFIG.MIN_POWER;
   if (value > CONFIG.MAX_POWER) value = CONFIG.MAX_POWER;
 
-  if (state.powerHandle && state.powerHandle.getValue() !== value) {
-    state.powerHandle.setValue(value);
+  if (controlPowerHandle && controlPowerHandle.getValue() !== value) {
+    controlPowerHandle.setValue(value);
   }
 
   return value;
 }
 
-// ============================================================================
-// VIRTUAL COMPONENT CONFIGURATION
-// ============================================================================
+function onModeChange(event) {
+  var value = event.value;
 
-function numberConfig(name, min, max, unit, defaultValue, persisted, view) {
-  return {
-    name: name,
-    default_value: defaultValue,
-    min: min,
-    max: max,
-    persisted: persisted,
-    meta: {
-      ui: {
-        view: view,
-        unit: unit,
-        step: 1
-      }
-    }
-  };
-}
-
-function buttonConfig(name, icon) {
-  return {
-    name: name,
-    meta: {
-      ui: {
-        view: 'button',
-        icon: icon
-      },
-      cloud: []
-    }
-  };
-}
-
-var VIRTUAL_COMPONENTS = {
-  components: [
-    { key: 'soc', type: 'number', id: 220, config: numberConfig('Battery SOC', 0, 100, '%', 0, false, 'progressbar') },
-    { key: 'batteryPower', type: 'number', id: 221, config: numberConfig('Battery Power', -2500, 2500, 'W', 0, false, 'label') },
-    { key: 'inverterState', type: 'number', id: 222, config: numberConfig('Inverter State', 0, 6, '', 0, false, 'label') },
-    { key: 'controlPower', type: 'number', id: 223, config: numberConfig('Control Power', CONFIG.MIN_POWER, CONFIG.MAX_POWER, 'W', CONFIG.DEFAULT_POWER, true, 'slider') },
-    { key: 'forceCharge', type: 'button', id: 220, config: buttonConfig('Force Charge', 'mdi:battery-charging') },
-    { key: 'stop', type: 'button', id: 221, config: buttonConfig('Stop', 'mdi:stop-circle-outline') },
-    { key: 'discharge', type: 'button', id: 222, config: buttonConfig('Discharge', 'mdi:battery-arrow-down-outline') },
-    {
-      key: 'slaveId',
-      type: 'number',
-      id: 299,
-      config: {
-        name: 'Modbus Slave ID',
-        min: MIN_SLAVE_ID,
-        max: MAX_SLAVE_ID,
-        default_value: DEFAULT_SLAVE_ID,
-        persisted: true,
-        meta: { ui: { view: 'input' }, cloud: ['status'], role: 'modbus_id' }
-      }
-    }
-  ],
-  groups: [
-    { id: 220, name: 'Marstek VenusE Control', components: ['soc', 'batteryPower', 'inverterState', 'controlPower', 'forceCharge', 'stop', 'discharge', 'slaveId'] }
-  ]
-};
-
-function bindVcHandles(readyVc) {
-  TELEMETRY[0].handle = readyVc.handles.soc;
-  TELEMETRY[1].handle = readyVc.handles.batteryPower;
-  TELEMETRY[2].handle = readyVc.handles.inverterState;
-  state.powerHandle = readyVc.handles.controlPower;
+  if (value === 'Force Charge') startControl('charge');
+  else if (value === 'Discharge') startControl('discharge');
+  else if (value === 'Stop') stopControl();
 }
 
 // ============================================================================
@@ -674,7 +359,7 @@ function sendRequest(request, callback) {
     return;
   }
 
-  if (request.fc === 0x03) frame = buildReadFrame(request.addr, request.qty);
+  if (request.fc === 0x03 || request.fc === 0x04) frame = buildReadFrame(request.fc, request.addr, request.qty);
   else frame = buildWriteFrame(request.addr, request.value);
 
   state.pendingRequest = {
@@ -771,8 +456,8 @@ function processResponse() {
   callback(null, value);
 }
 
-function readRegister(addr, qty, type, callback) {
-  sendRequest({ fc: 0x03, addr: addr, qty: qty, type: type }, callback);
+function readRegister(fc, addr, qty, type, callback) {
+  sendRequest({ fc: fc, addr: addr, qty: qty, type: type }, callback);
 }
 
 function writeRegister(addr, value, callback) {
@@ -865,18 +550,6 @@ function startControl(mode) {
   });
 }
 
-function onEvent(event) {
-  var action;
-
-  action = event.name;
-  if (event.info && event.info.event) action = event.info.event;
-  if (action !== 'single_push' && action !== 'push') return;
-
-  if (event.component === COMPONENTS.forceCharge) startControl('charge');
-  else if (event.component === COMPONENTS.stop) stopControl();
-  else if (event.component === COMPONENTS.discharge) startControl('discharge');
-}
-
 // ============================================================================
 // TELEMETRY
 // ============================================================================
@@ -892,13 +565,16 @@ function poll() {
     }
 
     item = TELEMETRY[index];
-    readRegister(item.addr, item.qty, item.type, function(err, raw) {
+    readRegister(item.fc, item.addr, item.qty, item.type, function(err, raw) {
+      var displayValue;
+
       if (err) {
         log(item.name + ': ERROR (' + err + ')');
       } else {
-        if (item.handle) item.handle.setValue(raw * item.scale);
+        displayValue = (item.addr === REG.INVERTER_STATE) ? stateName(raw) : raw * item.scale;
+        if (item.handle) item.handle.setValue(displayValue);
         if (item.addr === REG.INVERTER_STATE) {
-          debug('Inverter state: ' + raw + ' (' + stateName(raw) + ')');
+          debug('Inverter state: ' + raw + ' (' + displayValue + ')');
         }
       }
 
@@ -918,6 +594,23 @@ function poll() {
 function init() {
   log('Marstek VenusE charge/discharge control + VC');
 
+  if (modeHandle) modeHandle.on('change', onModeChange);
+  slaveIdHandle.on('change', function() {
+    log('Slave ID changed -> ' + getSlaveId());
+  });
+
+  // PILOT DIAGNOSTIC: confirm whether the "components" list in the group's
+  // @meta config auto-populated its membership, or came up empty (meaning a
+  // manual Group.Set call is still required). Check this print output, and
+  // separately confirm in the app UI that the group shows all 6 members.
+  var groupHandle = Script.getVcHandle("controlGroup");
+  if (groupHandle) {
+    log('[PILOT] controlGroup status: ' + JSON.stringify(groupHandle.getStatus()));
+    log('[PILOT] controlGroup config: ' + JSON.stringify(groupHandle.getConfig()));
+  } else {
+    log('[PILOT] controlGroup handle not found - managed VC group declaration may have failed');
+  }
+
   state.uart = UART.get();
   if (!state.uart) {
     log('ERROR: UART not available');
@@ -930,24 +623,10 @@ function init() {
 
   state.uart.recv(onReceive);
   state.isReady = true;
-  Shelly.addEventHandler(onEvent);
 
-  ensureVirtualComponents(VIRTUAL_COMPONENTS, function(ok, readyVc) {
-    if (!ok) {
-      log('ERROR: Virtual component setup failed');
-      return;
-    }
-
-    slaveIdHandle = readyVc.handles.slaveId;
-    slaveIdHandle.on('change', function() {
-      log('Slave ID changed -> ' + getSlaveId());
-    });
-
-    bindVcHandles(readyVc);
-    log('Ready; default control power is ' + getControlPower() + ' W');
-    Timer.set(500, false, poll);
-    state.pollTimer = Timer.set(CONFIG.POLL_INTERVAL, true, poll);
-  });
+  log('Ready; default control power is ' + getControlPower() + ' W');
+  Timer.set(500, false, poll);
+  state.pollTimer = Timer.set(CONFIG.POLL_INTERVAL, true, poll);
 }
 
 init();
