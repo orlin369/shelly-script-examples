@@ -298,13 +298,50 @@ The `examples-manifest.json` is the central registry for all production scripts.
 ### Branching Strategy
 - **main**: Production-ready code, only receives merges from dev
 - **dev**: Development/integration branch, receives merges from feature branches
-- **feature branches**: `feature/<short-description>` - created from dev
-- **bug fixes**: `fix/<short-description>` - created from dev
+- **topic branches**: `<topic-name>` (e.g., `modbus`) - created from dev for large features
+- **feature branches**: `feature/<short-description>` - created from dev or topic branch
+- **bug fixes**: `fix/<short-description>` - created from dev or topic branch
 
 ```
 main ←── dev ←── feature/xyz
               ←── fix/abc
+              ←── modbus ←── feature/modbus-polling
+                          ←── feature/modbus-entities
 ```
+
+### Topic Branches (Large Feature Groups)
+
+When working on a large group of related functionality (e.g., `modbus`, `lora`, `bluetooth`):
+
+1. **Create a topic branch from dev:**
+   ```bash
+   git checkout dev
+   git checkout -b <topic-name>
+   ```
+
+2. **Create feature branches from the topic branch:**
+   ```bash
+   git checkout <topic-name>
+   git checkout -b feature/<topic>-<description>
+   ```
+
+3. **Merge features into the topic branch (not dev):**
+   ```bash
+   git checkout <topic-name>
+   git merge feature/<topic>-<description> --no-ff
+   ```
+
+4. **When all features are complete, merge topic branch to dev:**
+   ```bash
+   git checkout dev
+   git merge <topic-name> --no-ff -m "Merge <topic-name> into dev"
+   ```
+
+**Rules for topic branches:**
+- All related features branch from and merge back to the topic branch
+- The topic branch is merged to dev only when the full feature group is complete
+- Topic branches follow the same "ask before merge/push" rules
+- Delete the topic branch after merging to dev
 
 ### IMPORTANT: Always Ask Before Git Operations
 
@@ -317,16 +354,20 @@ main ←── dev ←── feature/xyz
 Example prompts:
 - "Changes are ready. May I commit them?"
 - "Feature branch is complete. May I merge to dev?"
+- "Feature branch is complete. May I merge to the modbus topic branch?"
+- "Topic branch modbus is complete. May I merge to dev?"
 - "Tests passed. May I merge dev to main and push?"
 
 ### Commit Workflow (Step by Step)
 
-1. **Checkout dev branch:**
+1. **Checkout the base branch (dev or topic branch):**
    ```bash
    git checkout dev
+   # OR for large feature groups:
+   git checkout <topic-name>
    ```
 
-2. **Create feature branch from dev:**
+2. **Create feature branch from the base:**
    ```bash
    git checkout -b feature/<short-description>
    ```

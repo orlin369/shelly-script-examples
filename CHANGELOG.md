@@ -1,10 +1,41 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
 ## 2026-08
+- Make the Modbus slave/unit ID dynamic across every `modbus/` script instead of a hardcoded constant: expose it as a persisted `number:299` Virtual Component (min 1, max 247, precise numeric `input` view rather than a slider) carrying a `modbus_id` role tag for generic tooling discovery; a shared `getSlaveId()` helper reads the component live on every use, clamps/rounds it into range, and writes the clamped value back if it was out of range
+  - Continuously-polled scripts rebuild their `ModbusController` endpoint (and re-register all entities) whenever the slave-ID Virtual Component fires a `change` event, so a reconfigured ID takes effect without a script restart
+  - Applied to 97 scripts across every device folder, covering every architecture in the repo: `addEntity`-based dashboards, one-shot `readRegisters`/`writeRegisters` readers, module-scope single-entity examples, BMS command-simulation write logic (LinkedGo ST802), and HTTP-relayed control sequences (Marstek VenusE, SHEKRAN display, Deye/Growatt mode selectors)
+  - "Print-only, no data VC" scripts (register-table dumps, CLI examples, diagnostic scans) still get a slave-ID-only Virtual Component, since the ID is configuration, not sensor data
+  - `modbus/http-bridge/modbus_http_bridge.shelly.js` gets a lighter-weight treatment: only its per-request fallback default slave ID is now dynamic, since the bridge already accepts a `slave` override per request and builds a fresh endpoint each call
+  - `modbus/utils/modbus_scan.shelly.js` is intentionally excluded and documented as such: its entire purpose is sweeping a range of slave IDs looking for a device, so there is no single "current slave ID" to expose. `modbus/utils/modbus_register_scan.shelly.js` (fixed slave ID, sweeps register addresses instead) and `modbus/mb_structure_entities.shelly.js` do get the dynamic treatment; `modbus/mb_template.shelly.js` is left alone as a genuinely incomplete placeholder that never declares a Modbus endpoint
+  - Fixed a pre-existing bug (unrelated to this change, found while touching these files): 21 scripts across Deye SG01HP3/SG03LP1/SG04LP3 and all 4 Growatt device folders referenced `MODBUS_ENDPOINT`/`UPDATE_RATE` without ever declaring them
+- Make the Modbus slave/unit ID dynamic across `the_pill/MODBUS/` (the raw-UART, hand-rolled-library counterpart to `modbus/`'s native `ModbusController` rollout): replace every hardcoded `CONFIG.SLAVE_ID`/`CONFIG.SLAVE_CURRENT`/`CONFIG.SLAVE_TARGET`/`CONFIG.DEFAULT_SLAVE` with a persisted `number:299` Virtual Component (range 1-247, numeric `input` view, `modbus_id` role tag), read live via a shared `getSlaveId()` helper at every `buildFrame(...)` call site
+  - Applied to 32 scripts across every device folder: plain readers, existing `_vc.shelly.js` dashboards (`AUTO_VC_GROUP_ID`/`buildVirtualComponentsManifest()` pattern), inline-array frame builders (Marstek VenusE x4, V-TAC six-register x2), GACIA AICB2SP's dual read/write frame builders, and the HTTP bridge (lighter default-only treatment, since it already accepts a per-request `slave` override)
+  - `ComWinTop/mb308v.shelly.js`'s auto-scan-on-boot logic now writes each candidate ID straight into the Virtual Component instead of a local `CONFIG.SLAVE_ID` field, so `getSlaveId()` (used by `buildFrame()`) picks up the candidate mid-scan and the discovered ID ends up persisted
+  - `wirenboard/WB-MIR-v-3/wb_mir_v3_reconfig.shelly.js` gets two Virtual Components instead of one (`number:299` current + `number:298` target), since this utility genuinely needs both the ID it's currently talking to the device on and the ID it's reconfiguring the device to
+  - `utils/modbus_scan.shelly.js` is intentionally excluded and documented, matching its `modbus/` counterpart: it sweeps a slave-ID range by design, so there is no single "current slave ID" to expose; its post-scan help text now points at the Virtual Component instead of the old `CONFIG.SLAVE_ID` field
+  - `modbus_rtu.shelly.js` (the shared library) is left untouched: its public API already takes `slave` as an explicit per-call parameter, and its unused `CONFIG.DEFAULT_SLAVE` constant is dead config, not a hardcoded ID
 - Add `ble/ble-blu-button-presence_vc.shelly.js`, a Shelly BLU button presence watcher that tracks paired `bthomedevice` beacons and auto-creates a Boolean Virtual Component group for nearby/away state
 - Document the BLU button presence watcher step by step in `ble/README.md`, including the native Shelly Webhook (`boolean.change`) pattern for local "away" actions, keeping the published script free of hardcoded URLs
 - Update `http-integrations/tasmota/mitsubishi-heavy-ac/mitsubishi_heavy_ac_vc.shelly.js` to the new Mitsubishi Heavy AC auto-send workflow, target mapping, and reduced VC set; refresh its README and manifest description
 - Anonymize Mitsubishi Heavy AC example Tasmota target IP addresses to TEST-NET placeholders in the script and README
+- Add a self-deploying `*_vc.shelly.js` companion script to every device folder under `modbus/` (Deye SG01HP3/SG02LP1/SG03LP1/SG04LP3, Growatt MIC_2500TL-X/MIN_4200TL-XE/SFP5000/SPH_10000TL3_BH-UP, Huawei SUN-2000, IGEN DTSD422, MarsRock G2 SUN Series, ComWinTop CWT-MB308V, CyberPower CP1600EPFCLCD): reads the full documented register set every poll (printed to console) and self-deploys the 9 most valuable parameters as a grouped Virtual Components dashboard via the standard `ensureVirtualComponents` helper, replacing the previous `Virtual.getHandle`-only assumption that components already existed
+- Restore standard JSDoc headers (`@title`/`@description`/`@status`/`@link`) on 66 existing `modbus/` scripts that had lost them
+- Fix a stale `@link` pointing at `the_pill/MODBUS/...` on the MarsRock G2 SUN Series reader
+- Document the new per-device `*_vc.shelly.js` pattern in `modbus/README.md`
+- Make every remaining single-purpose `modbus/` script self-deploy its own Virtual Component(s) for whatever it reads, instead of assuming components already exist:
+  - Rewire 33 `ENTITIES`-array scripts across CyberPower CP1600EPFCLCD, Deye SG01HP3/SG02LP1/SG03LP1/SG04LP3, and Growatt MIC_2500TL-X/MIN_4200TL-XE/SFP5000/SPH_10000TL3_BH-UP to build a number-type Virtual Component (+ group) for every register they read via `ensureVirtualComponents`
+  - Rebuild the 5 raw Huawei SUN-2000 register-table fragments (`get_grid`, `get_pv`, `get_energy`, `device_state`, `get_inverter_status`) into complete, standalone, self-deploying scripts with a MODBUS endpoint, polling loop, and Virtual Components dashboard (previously just bare arrays with no runnable scaffolding)
+  - Add per-channel self-deploying Virtual Components to the 5 ComWinTop CWT-MB308V single-channel examples (`example_discrete_inputs`, `example_input_register`, `example_write_holding_register`, `example_discrete_outputs`, `example_pot_anim`), fixing two of them that assumed a pre-existing `number:200` component
+  - Fix 7 Deye/Growatt `application_examples` scripts (`display_virtual_components` x2, `display_virtual_components_ui_async`, `external_display`, `shekran/shekran`, `vc_modes_deye`, `vc_modes_growatt`) that previously called `Virtual.getHandle` on components assumed to already exist; the two `vc_modes_*` scripts now self-deploy `enum`-type Virtual Components for their mode selectors
+  - Leave `print_parameters.shelly.js`, `example_cli.shelly.js`, and `diagnostic_register_scan.shelly.js` intentionally Virtual-Component-free: their stated purpose is a console-only readout or a one-shot register scan with no fixed named parameters, matching the existing `entire_modbus_table.shelly.js`/`all_registes.shelly.js` exception
+  - Leave `get_battery.shelly.js` (Huawei), `get_regs.shelly.js`, `get_env.shelly.js`, and `get_inverter_settings.shelly.js` untouched: the first duplicates the other 5 Huawei fragments combined (treated like an entire-table reference), the other three still contain `TODO` placeholder register addresses that cannot be legitimately turned into working Virtual Components without fabricating hardware data
+- Adapt the `the_pill/MODBUS/` examples (raw UART + hand-rolled MODBUS-RTU library) to the native Shelly `ModbusController` API under `modbus/`, each with a self-deploying Virtual Components dashboard: Davis Pyranometer, DFRobot SEN0492, GACIA AICB2SP, JKESS JK200-MBS, LinkedGo R290 thermal pump, LinkedGo ST802 thermostat + BMS command simulation, Marstek VenusE (plus a dedicated charge/discharge control script), V-TAC VT6607103, Wirenboard WB-M1W2-v3, and Wirenboard WB-MIR-v3
+  - Skip ComWinTop MB308V, Deye SG02LP1, and MarsRock SUN-G2: already ported to `modbus/` from this same source earlier in the session
+  - Also port the vendor-agnostic `modbus_scan.shelly.js` and `modbus_register_scan.shelly.js` discovery utilities to `modbus/utils/`, and the `modbus_http_bridge.shelly.js` HTTP-to-MODBUS bridge to `modbus/http-bridge/`, all rebuilt on the native `ModbusController` API (the HTTP bridge in particular drops hundreds of lines of manual CRC/byte-order encode-decode logic now handled internally by the controller)
+  - Update `modbus/README.md` with the newly ported device folders
+- Equalize `modbus/` with `the_pill/MODBUS/` by porting the 5 remaining device scripts initially skipped as lower-priority: `venus_e_status_vc.shelly.js` (Marstek's operational-status VC dashboard, a distinct curated layout from `venus_e_vc.shelly.js`'s live-power-flow one), `vtac_baseline_watch.shelly.js` and `vtac_inferred_reader.shelly.js` (V-TAC register-discovery/validation tools), and `wb_mir_v3_ir.shelly.js`/`wb_mir_v3_reconfig.shelly.js` (WB-MIR v3 IR learn/play/dump/erase and baud/slave-ID reconfiguration utilities) - `modbus/` now has full 1:1 parity with `the_pill/MODBUS/` (excluding the raw `modbus_rtu.shelly.js` library itself, which has no native-API equivalent to port)
 
 ## 2026-07-29
 
@@ -12,8 +43,6 @@
 - Merge BLU assistant demo VC creation into `add-to-wifi.shelly.js`, `full-config.shelly.js`, and `config-mqtt.shelly.js`
 - Add `_vc.shelly.js` self-provisioning variants for BLE open windows, Fronius grid/dashboard, Victron MPPT, Roomba, and YS-IRTM examples
 - Move EcoFlow STREAM Ultra static VC script onto the shared Virtual Component helper so it creates, verifies, groups, and reuses dashboard components consistently
-
-All notable changes to this project will be documented in this file.
 
 ## 2026-07
 - Migrate runtime Virtual Component examples to self-create, verify, repair, group, and bind their own VCs through the standard helper mechanism
@@ -141,6 +170,8 @@ All notable changes to this project will be documented in this file.
 - Expand `cury/` README files with per-script use cases and user personas
 - Standardize JSDoc metadata headers for all `cury/**/*.shelly.js` scripts (`@title`, `@description`, `@status`, `@link`)
 - Reorganize `cury/` examples into `light-language/`, `button-control/`, and `legacy/` folders with README files and duplicate analysis notes
+- Update `modbus/Deye/SG02LP1/application_examples/shekran/README.md` to reflect script functionality
+- Add new `modbus/` example collection and standardize JSDoc headers across the new `.shelly.js` files
 - Add `switch-input/rgbw-remote-controll.shelly.js` and register it in the manifest/index
 - Restructure loose HTTP integration scripts into per-script folders with matching README files
 - Fix incomplete Prometheus move (update manifest, @link, README, delete old file)
