@@ -15,6 +15,7 @@ Use these to monitor consumption, automatically manage loads to stay within powe
 | [`monitor-production.shelly.js`](monitor-production.shelly.js) | Companion to `advanced-load-shedding.shelly.js` — adds a second power source (PV, generator, grid) to the shedding calculation. |
 | [`power-outages.shelly.js`](power-outages.shelly.js) | Monitors any device or service via HTTP/HTTPS and executes webhooks or publishes MQTT topics on failure or recovery. |
 | [`power-threshold-limit-output.shelly.js`](power-threshold-limit-output.shelly.js) | Turns off configured channels when total power consumption exceeds a threshold. |
+| [`victron-ble-bridge.shelly.js`](victron-ble-bridge.shelly.js) | Forwards received BLE advertisements to a Victron GX device over HTTPS so bridged sensors show up under Settings → Bluetooth Sensors. Requires Shelly firmware 1.5.0+ and GX firmware 3.80+; configured via Virtual Components or a `venus-host` KVS key. |
 | [`victron-mppt-solar-controller_vc.shelly.js`](victron-mppt-solar-controller_vc.shelly.js) | Decrypts Victron SmartSolar MPPT Bluetooth advertisements and updates Shelly Virtual Components with live solar charger values. |
 
 ## Other Files

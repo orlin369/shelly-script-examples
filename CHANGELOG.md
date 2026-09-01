@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-09
+- Add `power-energy/victron-ble-bridge.shelly.js` (upstream PR #217 by Thiemo van Engelen, Victron Energy): a BLE bridge that forwards BLE advertisement data to a Victron GX device over HTTPS, making bridged sensors appear under Settings → Bluetooth Sensors. Requires Shelly firmware 1.5.0+ and GX firmware 3.80+; configured through Virtual Components where supported, otherwise a `venus-host` KVS key. Cherry-picked from `upstream/main` and adapted to the fork's standard two-header JSDoc convention
+
 ## 2026-08
 - Tag `modbus/` and `the_pill/MODBUS/` scripts in `examples-manifest.json` so the library search can distinguish them: `modbus-controller` for the native Shelly `ModbusController` API + hardware add-on, `modbus-software` for `the_pill/MODBUS/`'s hand-rolled UART-based MODBUS-RTU library. Applied to the 1 `modbus/` and 25 `the_pill/MODBUS/` entries currently in the manifest (only `@status production` files are indexed; the rest of `modbus/` is still `@status under development` and stays out of the manifest until promoted)
 - Make the Modbus slave/unit ID dynamic across every `modbus/` script instead of a hardcoded constant: expose it as a persisted `number:299` Virtual Component (min 1, max 247, precise numeric `input` view rather than a slider) carrying a `modbus_id` role tag for generic tooling discovery; a shared `getSlaveId()` helper reads the component live on every use, clamps/rounds it into range, and writes the clamped value back if it was out of range
