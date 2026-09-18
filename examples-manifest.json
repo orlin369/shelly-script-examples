@@ -33,6 +33,19 @@
     ]
   },
   {
+    "fname": "ble/ble-blu-button-presence_vc.shelly.js",
+    "title": "Shelly BLU button presence watcher + Virtual Components",
+    "description": "Tracks paired Shelly BLU button beacon presence through bthomedevice components and updates a self-created Boolean Virtual Component for nearby/away state.",
+    "tags": [
+      "ble",
+      "shelly-blu",
+      "bthome",
+      "virtual-components",
+      "presence",
+      "monitoring"
+    ]
+  },
+  {
     "fname": "ble/ble-bparasite.shelly.js",
     "title": "BLE in Scripting - b-parasite example",
     "description": "Example how to use a 3rd party BLE sensor, read environment data. (Requires firmware version\n0.12.0-beta1 or newer)",
@@ -184,17 +197,9 @@
     ]
   },
   {
-    "fname": "ble/ble-blu-button-presence_vc.shelly.js",
-    "title": "Shelly BLU button presence watcher + Virtual Components",
-    "description": "Tracks paired Shelly BLU button beacon presence through bthomedevice components and updates a self-created Boolean Virtual Component for nearby/away state.",
-    "tags": [
-      "ble",
-      "shelly-blu",
-      "bthome",
-      "virtual-components",
-      "presence",
-      "monitoring"
-    ]
+    "fname": "ble/blu-gateway-bthome-to-mqtt.shelly.js",
+    "title": "BLU Gateway BTHome to MQTT Script",
+    "description": "Publishes decoded Shelly BLU / BTHome advertisements as"
   },
   {
     "fname": "ble/hue-lights-control.shelly.js",
@@ -654,6 +659,11 @@
     ]
   },
   {
+    "fname": "modbus/LG/lg-therma-v-pro-em50_vc.shelly.js",
+    "title": "LG THERMA V Modbus bridge for Shelly Pro EM-50",
+    "description": "Self-contained RS-485/Modbus RTU bridge for compatible LG THERMA V"
+  },
+  {
     "fname": "modbus/Sigenergy/SigenStor/sigenstor_plant_vc.shelly.js",
     "title": "Sigenergy SigenStor MODBUS-RTU plant monitor",
     "description": "Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components with cloud logging.",
@@ -721,6 +731,11 @@
       "lighting",
       "scenes"
     ]
+  },
+  {
+    "fname": "mqtt/mqtt-jaalee-jht-bridge.shelly.js",
+    "title": "Jaalee JHT BLE - MQTT Home Assistant Bridge",
+    "description": "Parses iBeacon-format temperature/humidity/battery data from Jaalee JHT BLE sensors via Shelly BLU Gateway and publishes to Home Assistant via MQTT Auto-Discovery."
   },
   {
     "fname": "mqtt/mqtt-switch-status-announce.shelly.js",
@@ -798,7 +813,7 @@
   {
     "fname": "power-energy/automatic-transfer-switch/iats_grid_backup_controller.shelly.js",
     "title": "iATS two-channel grid/backup automatic transfer switch controller",
-    "description": "Controls K1 (grid) and K2 (backup) contactors on a two-channel Shelly device (Pro 2, Pro 2PM, Plus 2PM, 2PM Gen3/Gen4 in switch profile). SW1/input:0 = grid available; SW2/input:1 = backup available. Grid is preferred when both sources are present. Physical inputs are detached from outputs on boot \u2014 this script is the sole owner of switch:0 (K2) and switch:1 (K1). Both outputs are opened before a transfer; a configurable delay prevents contactor overlap. Optional manual override is received from the Sensor Add-on helper via KVS; a stale-sequence watchdog reverts to AUTO when the helper stops publishing.",
+    "description": "Controls K1 (grid) and K2 (backup) contactors on a two-channel Shelly device (Pro 2, Pro 2PM, Plus 2PM, 2PM Gen3/Gen4 in switch profile). SW1/input:0 = grid available; SW2/input:1 = backup available. Grid is preferred when both sources are present. Physical inputs are detached from outputs on boot — this script is the sole owner of switch:0 (K2) and switch:1 (K1). Both outputs are opened before a transfer; a configurable delay prevents contactor overlap. Optional manual override is received from the Sensor Add-on helper via KVS; a stale-sequence watchdog reverts to AUTO when the helper stops publishing.",
     "doc": "power-energy/automatic-transfer-switch/README.md",
     "tags": [
       "energy",
@@ -812,7 +827,7 @@
   {
     "fname": "power-energy/automatic-transfer-switch/iats_sensor_addon_manual_control.shelly.js",
     "title": "iATS Sensor Add-on manual control helper",
-    "description": "Companion script for the iATS controller, running on the Shelly Pro Sensor Add-on. DIN0 (input:100) selects AUTO vs MANUAL mode; DIN1 (input:101) selects GRID vs PV target. Publishes the current selection to KVS at a configurable interval. Does not touch relay outputs \u2014 iats_grid_backup_controller.shelly.js remains the sole owner of switch:0/1 and validates source availability before acting on any manual request.",
+    "description": "Companion script for the iATS controller, running on the Shelly Pro Sensor Add-on. DIN0 (input:100) selects AUTO vs MANUAL mode; DIN1 (input:101) selects GRID vs PV target. Publishes the current selection to KVS at a configurable interval. Does not touch relay outputs — iats_grid_backup_controller.shelly.js remains the sole owner of switch:0/1 and validates source availability before acting on any manual request.",
     "doc": "power-energy/automatic-transfer-switch/README.md",
     "tags": [
       "energy",
@@ -884,6 +899,11 @@
       "switch",
       "load-management"
     ]
+  },
+  {
+    "fname": "power-energy/pro4pm-load-shedding.shelly.js",
+    "title": "Pro 4PM Load Shedding (Single Device, 16 A)",
+    "description": "Monitors the combined current of all four switch channels on a"
   },
   {
     "fname": "power-energy/victron-ble-bridge.shelly.js",
