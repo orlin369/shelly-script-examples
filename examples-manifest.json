@@ -493,6 +493,11 @@
     ]
   },
   {
+    "fname": "http-integrations/innova-airleaf/innova-airleaf-ewf644ii_vc.shelly.js",
+    "title": "INNOVA AirLeaf EWF644II local controller",
+    "description": "Memory-optimized local HTTP controller for INNOVA AirLeaf EWF644II deviceType 002 with Shelly Virtual Components."
+  },
+  {
     "fname": "http-integrations/prometheus/prometheus.shelly.js",
     "title": "Prometheus HTTP Endpoint for a single switch",
     "description": "This script exposes a /status endpoint that returns Prometheus metrics that can be scraped.",
@@ -537,6 +542,69 @@
       "http",
       "notifications",
       "telegram"
+    ]
+  },
+  {
+    "fname": "lnm/input-group-switch-control.shelly.js",
+    "title": "LNM Input to Group Switch Control",
+    "description": "Sends multicast switch commands with LNM.Call when a local input receives single, double, or long push gestures.",
+    "doc": "lnm/README.md",
+    "tags": [
+      "lnm",
+      "local-network",
+      "input",
+      "switch",
+      "automation"
+    ]
+  },
+  {
+    "fname": "lnm/message-monitor.shelly.js",
+    "title": "LNM Message Monitor",
+    "description": "Logs Local Network Messaging status updates and events with optional sender and LNM-instance filtering for setup and troubleshooting.",
+    "doc": "lnm/README.md",
+    "tags": [
+      "lnm",
+      "local-network",
+      "diagnostics",
+      "monitoring"
+    ]
+  },
+  {
+    "fname": "lnm/received-button-switch-control.shelly.js",
+    "title": "LNM Received Button Switch Control",
+    "description": "Converts remote input gestures received through Local Network Messaging into local switch toggle, on, and off actions.",
+    "doc": "lnm/README.md",
+    "tags": [
+      "lnm",
+      "local-network",
+      "input",
+      "switch",
+      "automation"
+    ]
+  },
+  {
+    "fname": "lnm/switch-state-follower.shelly.js",
+    "title": "LNM Switch State Follower",
+    "description": "Mirrors a remote switch output received through Local Network Messaging onto a configurable local switch output.",
+    "doc": "lnm/README.md",
+    "tags": [
+      "lnm",
+      "local-network",
+      "switch",
+      "automation"
+    ]
+  },
+  {
+    "fname": "lnm/tv-power-av-follower.shelly.js",
+    "title": "TV Power to AV Outputs over LNM",
+    "description": "Follows a TV's remotely measured power over Local Network Messaging and switches selected local AV outputs using configurable hysteresis and an OFF delay.",
+    "doc": "lnm/README.md",
+    "tags": [
+      "lnm",
+      "local-network",
+      "energy",
+      "automation",
+      "audio"
     ]
   },
   {
@@ -1497,6 +1565,22 @@
     ]
   },
   {
+    "fname": "modbus/Midea/midea-clivet-r32-pro-modbus-vc.shelly.js",
+    "title": "Midea/Clivet R32 Modbus RTU bridge",
+    "description": "Local zone-1, DHW and Silent Mode control with nine Virtual Components. Requires firmware 2.0.0+ and Shelly Pro Modbus Add-on.",
+    "doc": "modbus/Midea/README.md",
+    "tags": [
+      "modbus-controller",
+      "modbus-rtu",
+      "hvac",
+      "midea",
+      "clivet",
+      "r32",
+      "heat-pump",
+      "virtual-components"
+    ]
+  },
+  {
     "fname": "modbus/Sigenergy/SigenStor/sigenstor_plant_vc.shelly.js",
     "title": "Sigenergy SigenStor MODBUS-RTU plant monitor",
     "description": "Reads SigenStor plant PV, battery, grid, load, SOC, grid state, and status values into Virtual Components with cloud logging.",
@@ -1756,7 +1840,7 @@
   {
     "fname": "power-energy/automatic-transfer-switch/iats_grid_backup_controller.shelly.js",
     "title": "iATS two-channel grid/backup automatic transfer switch controller",
-    "description": "Controls K1 (grid) and K2 (backup) contactors on a two-channel Shelly device (Pro 2, Pro 2PM, Plus 2PM, 2PM Gen3/Gen4 in switch profile). SW1/input:0 = grid available; SW2/input:1 = backup available. Grid is preferred when both sources are present. Physical inputs are detached from outputs on boot \u2014 this script is the sole owner of switch:0 (K2) and switch:1 (K1). Both outputs are opened before a transfer; a configurable delay prevents contactor overlap. Optional manual override is received from the Sensor Add-on helper via KVS; a stale-sequence watchdog reverts to AUTO when the helper stops publishing.",
+    "description": "Controls K1 (grid) and K2 (backup) contactors on a two-channel Shelly device (Pro 2, Pro 2PM, Plus 2PM, 2PM Gen3/Gen4 in switch profile). SW1/input:0 = grid available; SW2/input:1 = backup available. Grid is preferred when both sources are present. Physical inputs are detached from outputs on boot — this script is the sole owner of switch:0 (K2) and switch:1 (K1). Both outputs are opened before a transfer; a configurable delay prevents contactor overlap. Optional manual override is received from the Sensor Add-on helper via KVS; a stale-sequence watchdog reverts to AUTO when the helper stops publishing.",
     "doc": "power-energy/automatic-transfer-switch/README.md",
     "tags": [
       "energy",
@@ -1770,7 +1854,7 @@
   {
     "fname": "power-energy/automatic-transfer-switch/iats_sensor_addon_manual_control.shelly.js",
     "title": "iATS Sensor Add-on manual control helper",
-    "description": "Companion script for the iATS controller, running on the Shelly Pro Sensor Add-on. DIN0 (input:100) selects AUTO vs MANUAL mode; DIN1 (input:101) selects GRID vs PV target. Publishes the current selection to KVS at a configurable interval. Does not touch relay outputs \u2014 iats_grid_backup_controller.shelly.js remains the sole owner of switch:0/1 and validates source availability before acting on any manual request.",
+    "description": "Companion script for the iATS controller, running on the Shelly Pro Sensor Add-on. DIN0 (input:100) selects AUTO vs MANUAL mode; DIN1 (input:101) selects GRID vs PV target. Publishes the current selection to KVS at a configurable interval. Does not touch relay outputs — iats_grid_backup_controller.shelly.js remains the sole owner of switch:0/1 and validates source availability before acting on any manual request.",
     "doc": "power-energy/automatic-transfer-switch/README.md",
     "tags": [
       "energy",
@@ -1819,6 +1903,16 @@
       "solar",
       "monitoring",
       "load-management"
+    ]
+  },
+  {
+    "fname": "power-energy/plus-plug-s-led-power-states.shelly.js",
+    "title": "Shelly Plus Plug S LED Power Visualization",
+    "description": "Shows current power consumption as fixed LED ring states or a green-to-red gradient on a Shelly Plus Plug S.",
+    "tags": [
+      "energy",
+      "monitoring",
+      "led"
     ]
   },
   {
